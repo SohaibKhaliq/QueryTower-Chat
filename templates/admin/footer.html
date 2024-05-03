@@ -1,0 +1,37 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{  url('dashboard') }}">{{_("Dashboard",2)}}</a></li>
+    <li class="breadcrumb-item">{{_("Settings",2)}}</li>
+    <li class="breadcrumb-item active" aria-current="page">{{_("Footer",2)}}</li>
+  </ol>
+</nav>
+
+
+<!-- Content Row -->
+<div class="row">
+    <div class="col-md-8">
+        <div class="card card-footer-settings">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    {{_("Footer Settings",2)}}
+                </h6>
+            </div>
+            <div class="card-body">
+                <form id="footer-settings">
+                    {{ csrf_token()|raw }}
+                    <div class="form-group">
+                        <label for="copyright">{{_("Copyright Text",2)}}</label>
+                        <input type="text" class="form-control" id="copyright" name="copyright" value="{{SETTINGS.copyright}}">
+                    </div>
+                    <button type="button" class="btn btn-primary update-settings" value="footer-settings">{{_("Update",2)}}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

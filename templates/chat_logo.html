@@ -1,0 +1,57 @@
+ <!-- Topbar Navbar -->
+    <ul class="navbar-nav {% if hide_chat_list == false %}mr-auto{% endif %}">
+        <!-- Nav Item - User Information -->
+        <li class="nav-item dropdown no-arrow nav-logo">
+            <a class="nav-link logo" {% if SETTINGS.sso_enabled and SETTINGS.sso_home_url %}target="_parent"{% endif %} href="{% if SETTINGS.sso_enabled and SETTINGS.sso_home_url %} {{ SETTINGS.sso_home_url }} {% else %} {{ url('index') }} {% endif %}">
+                {% if THEME == 'light' %}
+                    {% if SETTINGS.light_theme_logo %}
+                        <img class="mr-2 large" src="{{MEDIA_URL}}/settings/{{SETTINGS.light_theme_logo}}">
+                    {% elseif SETTINGS.logo %}
+                    {% else %}
+                        <img class="mr-2 large" src="{{STATIC_URL}}/img/logo.png">
+                    {% endif %}
+                {% else %}
+                    {% if SETTINGS.logo %}
+                        <img class="mr-2 large" src="{{MEDIA_URL}}/settings/{{SETTINGS.logo}}">
+                    {% else %}
+                        <img class="mr-2 large" src="{{STATIC_URL}}/img/logo.png">
+                    {% endif %}
+                {% endif %}
+                {% if THEME == 'light' %}
+                    {% if SETTINGS.light_theme_small_logo %}
+                        <img class="small" src="{{MEDIA_URL}}/settings/{{SETTINGS.light_theme_small_logo}}">
+                    {% elseif SETTINGS.small_logo %}
+                        <img class="small" src="{{MEDIA_URL}}/settings/{{SETTINGS.small_logo}}">
+                    {% else %}
+                        <img class="small" src="{{STATIC_URL}}/img/logo_small.png">
+                    {% endif %}
+                {% else %}
+                    {% if SETTINGS.small_logo %}
+                        <img class="small" src="{{MEDIA_URL}}/settings/{{SETTINGS.small_logo}}">
+                    {% else %}
+                        <img class="small" src="{{STATIC_URL}}/img/logo_small.png">
+                    {% endif %}
+                {% endif %}
+            </a>
+        </li>
+    </ul>
+    <div class="status-change mr-2 {% if hide_chat_list == false %}ml-auto{% endif %}">
+        <div class="room-selector chat-room-selector" data-toggle="modal" data-target="#roomModals" >
+            <div class="room-selected" >
+                {{ chat_room.name }} 
+            </div>
+            <div class="launch-modal">
+                <i class="fas fa-list-ul"></i>
+            </div>
+        </div>
+        <div class='all-room-unread'>
+            <span class="badge badge-danger badge-all-unread all-unread-1"></span>
+        </div>
+    </div>
+
+    <div class=" mobile-chat-list-toggle">
+        <button class="chat-list-toggle btn-success btn-circle btn-sm">
+            <i class="fa fa-angle-left"></i>
+        </button>
+    </div>
+

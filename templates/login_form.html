@@ -1,0 +1,193 @@
+
+    <div class="p-4">
+        <div class="action-logo">
+            {% if THEME == 'light' or THEME == 'default' %}
+                {% if SETTINGS.light_theme_logo %}
+                    <img class="" src="{{MEDIA_URL}}/settings/{{SETTINGS.light_theme_logo}}">
+                {% elseif SETTINGS.logo %}
+                    <img class="" src="{{MEDIA_URL}}/settings/{{SETTINGS.logo}}">
+                {% else %}
+                    <img class="" src="{{STATIC_URL}}/img/logo.png">
+                {% endif %}
+            {% else %}
+                {% if SETTINGS.logo %}
+                    <img class="" src="{{MEDIA_URL}}/settings/{{SETTINGS.logo}}">
+                {% else %}
+                    <img class="" src="{{STATIC_URL}}/img/logo.png">
+                {% endif %}
+            {% endif %}
+        </div>
+        <div class="text-center">
+            {% if chat_room %}
+                <h1 class="h4 text-gray-900 mb-4">{{ _("Welcome to") }} {{chat_room.name}}!</h1>
+            {% elseif SETTINGS.site_name %}
+                <h1 class="h4 text-gray-900 mb-4">{{ _("Welcome to") }} {{SETTINGS.site_name}}</h1>
+            {% else %}
+                <h1 class="h4 text-gray-900 mb-4">{{ _("Welcome") }} </h1>
+            {% endif %}
+        </div>
+        {{ msg() }}
+        <span class="msg-cont"></span>
+        {% if SETTINGS.sso_enabled and SETTINGS.sso_login_url and admin_login != true %}
+            <div class="text-center mb-3">
+                {% if chat_room %}
+                    {{chat_room.description}}
+                {% endif %}
+            </div>
+
+            <a class="btn btn-primary btn-user btn-block" href="{{ SETTINGS.sso_login_url }}" target="_parent">
+                {{_("Login")}}
+            </a>
+        {% else %}
+
+            {% if SETTINGS.guest_mode %}
+            <ul class="nav nav-pills nav-fill nav-member" role="tablist">
+                <li class="nav-item">
+
+                    <a class="nav-link active" id="member-tab" data-toggle="tab" href="#member" role="tab" aria-controls="member" aria-selected="true">
+                        <i class="fas fa-user-tie"></i>
+                        {{_("Member")}}
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="guest-tab" data-toggle="tab" href="#guest" role="tab" aria-controls="guest" aria-selected="false">
+                        <i class="fas fa-user-clock"></i>
+                        {{_("Guest")}}
+                    </a>
+                </li>
+            </ul>
+            {% endif %}
+
+            {% if SETTINGS.guest_mode %}
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="member" role="tabpanel" aria-labelledby="member-tab">
+                    <div class="mt-4">
+            {% endif %}
+                        <form class="user" method="POST" id="login-form-member" action="{{ url('login') }}?next={{next_url}}">
+                            {{ csrf_token()|raw }}
+                            <div class="form-group">
+                                <input type="text" name="email" required="required" class="form-control form-control-user" id="email" placeholder="{{ _('Email or Username') }}">
+                            </div>
+                            <div class="form-group">
+                                <input type="password" name="password" required="required" autocomplete="false" class="form-control form-control-user" id="password" placeholder="{{ _('Password') }}">
+                            </div>
+                            <!-- reCpatcha -->
+                            {% if SETTINGS.recaptcha_version == 2 %}
+                            <div class="g-recaptcha" data-sitekey="{{SETTINGS.recaptcha_sitekey}}"></div>
+                            {% endif %}
+                            {% if SETTINGS.recaptcha_version == 3 %}
+                            <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response">
+                            {% endif %}
+                            <!-- /reCpatcha -->
+                            <button id="main-login" type="submit" class="btn btn-primary btn-user btn-block">
+                                {{_("Login")}}
+                            </button>
+
+
+                            {% if SETTINGS.enable_social_login %}
+
+                            <div class="social-seperator">
+                                <hr>
+                                <div class="">{{_("Or Sign in With")}}</div>
+                            </div>
+                            <div class="social-login-container">
+                                {% for hybridauth_provider in hybridauth_providers %}
+                                    <div class="social-provider">
+                                        <a title="Sign in with {{hybridauth_provider}}" href="{{ url('sociallogin-callback') }}?provider={{hybridauth_provider}}">
+                                            <img src="{{STATIC_URL}}/img/auth_icons/{{hybridauth_provider}}.png" alt="">
+                                        </a>
+                                    </div>
+                                {% endfor %}
+                            </div>
+
+                            {% endif %}
+
+                        </form>
+            {% if SETTINGS.guest_mode %}
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="guest" role="tabpanel" aria-labelledby="guest-tab">
+                    <div class="mt-4">
+                        <form class="user" method="POST" action="{{ url('guest-login') }}?next={{next_url}}">
+                            {{ csrf_token()|raw }}
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" >{{_("Guest")}}-</span>
+                                </div>
+                                <input type="text" required maxlength="20" value="{{guest_data.guest_userid}}" name="guest_name"
+                                    {% if not SETTINGS.guest_name_edit %}
+                                    readonly
+                                    {% endif %}
+                                    class="form-control" placeholder="{{_('Guest Name')}}" >
+                            </div>
+
+                            {% if SETTINGS.guest_dob %}
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="">{{_("Birthday")}}</span>
+                                </div>
+                                <div class="date-dropdown w-auto">
+                                    <input type="hidden" class="form-control form-control-user dob" id="dob" name="dob" value="{{dob}}" placeholder="{{_('Birthday')}}">
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            {% if SETTINGS.guest_sex %}
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="">{{_("Gender")}} </span>
+                                </div>
+                                <select class="form-control form-control-user" id="sex" name="sex">
+                                    <option value="1" {% if sex == 1 %}selected{% endif %}>{{_("Male")}}</option>
+                                    <option value="2" {% if sex == 2 %}selected{% endif %}>{{_("Female")}}</option>
+                                    <option value="3" {% if sex == 3 %}selected{% endif %}>{{_("Other")}}</option>
+                                </select>
+                            </div>
+                            {% endif %}
+
+                            {% if SETTINGS.guest_country %}
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="">{{_("Country")}}</span>
+                                </div>
+                                <select class="form-control form-control-user select2" id="country" name="country">
+                                    <option value="">{{_("Country")}}</option>
+                                    {% for country_code, country_name in country_list %}
+                                    <option {% if country_code == country %}selected{% endif %} value="{{ country_code }}">{{ country_name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            {% endif %}
+
+                            <input type="hidden" name="timezone" id="auto-timezone">
+
+                            <!-- reCpatcha -->
+                            {% if SETTINGS.recaptcha_version == 2 %}
+                            <div class="g-recaptcha" data-sitekey="{{SETTINGS.recaptcha_sitekey}}"></div>
+                            {% endif %}
+                            {% if SETTINGS.recaptcha_version == 3 %}
+                            <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response">
+                            {% endif %}
+                            <!-- /reCpatcha -->
+                            <input type="hidden" value="{{guest_data.guest_username}}" name="guest_username" readonly class="form-control" >
+                            <button type="submit" class="btn btn-primary btn-user btn-block">
+                                {{_("Login")}}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <hr>
+            <div class="text-center">
+                {% if SETTINGS.member_registration == "1" %}
+                    <a class="small" href="{{ url('register') }}"><i class="fa fa-user-plus "></i>  {{_("Create an Account!")}}</a>
+                {% endif %}
+                <a class="small" href="{{ url('forgot-password') }}"><i class="fa fa-user-injured ml-2"></i>  {{_("Forgot Password?")}}</a>
+                <a class="small" href="{{ url('index') }}"><i class="fa fa-home ml-2"></i>  {{_("Home")}}</a>
+            </div>
+        {% endif %}
+
+
+    </div>

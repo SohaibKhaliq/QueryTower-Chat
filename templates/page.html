@@ -1,0 +1,15 @@
+{% extends "base.index.html" %}
+{% block content %}
+<section class="bg-white py-5 main-content {% if page.show_banner == '0' %}no-header{% endif %}">
+    <div class="container">
+        <span class="chat-list-header">
+            <h2 class="mb-2">{{page.title}}</h2>
+        </span>
+        <div class="row mt-5">
+            <div class="col">
+                {{page.content|htmlspecialchars_decode|raw}}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

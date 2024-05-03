@@ -1,0 +1,117 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{  url('dashboard') }}">{{_("Dashboard",2)}}</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{{_("Radio",2)}}</li>
+  </ol>
+</nav>
+
+<!-- Content Row -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-radio-settings">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    {{_('Radio Settings',2)}}
+                </h6>
+            </div>
+            <div class="card-body">
+                <form id="radio-settings" enctype='multipart/form-data'>
+                    {{ csrf_token()|raw }}
+
+                    <div class="form-group">
+                        <label for="enable_radio">{{_('Enable Radio',2)}}</label>
+                        <select class="form-control col-md-6" id="enable_radio" name="radio">
+                            <option value="0" {% if SETTINGS.radio == 0 %}selected{% endif %}>{{_('No',2)}}</option>
+                            <option value="1" {% if SETTINGS.radio == 1 %}selected{% endif %}>{{_('Yes',2)}}</option>
+                        </select>
+                    </div>
+                    <div class="enable-radio-area table-responsive" {% if SETTINGS.radio == 0 %}style="display:none;"{% endif %}>
+                        <div class="row">
+                            <div class="col">
+                                <div class="text-right mb-2">
+                                    <a href="javascript:void(0)" class="btn btn-primary btn-xs add-new-radio">{{_("Add New Radio",2)}}</a>
+                                </div>
+                            </div>
+                        </div>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>{{_("Name",2)}}</th>
+                                    <th>{{_("Description",2)}}</th>
+                                    <th>{{_("Source",2)}}</th>
+                                    <th>{{_("Image",2)}}</th>
+                                    <th>{{_("Status",2)}}</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody class="radio-list">
+                                <tr class="hidden-row">
+                                    <td>
+                                        <input type="hidden" id="id" name="id" value="" />
+                                        <input class="form-control" type="text" id="name" name="name" value="" placeholder="{{_('Station Name',2)}}"/>
+                                    </td>
+                                    <td><input class="form-control" type="text" id="description" name="description" value="" placeholder="{{_('Description',2)}}"></td>
+                                    <td><input class="form-control" type="text" id="source" name="source" value="" placeholder="{{_('Source',2)}}"></td>
+                                    <td>
+                                        <label class="btn btn-sm btn-radio-icon-upload">
+                                            <i class="fas fa-camera"></i>
+                                            <input type="file" class="upload-radio-icon" data-image="" name="upload-radio-icon" value="Upload Photo">
+                                        </label>
+                                        <img class="radio-icon" id='radio-icon' src="" alt="" />
+                                    </td>
+                                    <td>
+                                        <select class="form-control" id="status" name="status">
+                                            <option value="1">{{_('Active',2)}}</option>
+                                            <option value="0">{{_('Inactive',2)}}</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <a class="btn btn-danger btn-xs delete-radio" href="javascript:void(0)" title="{{_('Delete Radio Station',2)}}">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% for radio_station in radio_stations %}
+                                    <tr>
+                                        <td>
+                                            <input type="hidden" id="id" name="id" value="{{ radio_station.id }}" />
+                                            <input class="form-control" type="text" id="name" name="name" value="{{ radio_station.name }}" placeholder="{{_('Station Name',2)}}" />
+                                        </td>
+                                        <td><input class="form-control" type="text" id='description' name="description" value="{{ radio_station.description }}" placeholder="{{_('Description',2)}}"></td>
+                                        <td><input class="form-control" type="text" id='source' name="source" value="{{ radio_station.source }}" placeholder="{{_('Source',2)}}"></td>
+                                        <td>
+                                            <label class="btn btn-sm btn-radio-icon-upload">
+                                                <i class="fas fa-camera"></i>
+                                                <input type="file" class="upload-radio-icon" data-image="" name="upload-radio-icon" value="Upload Photo">
+                                            </label>
+                                            <img class="radio-icon" id='radio-icon' src="{% if radio_station.image %}{{MEDIA_URL}}/settings/{{ radio_station.image }}{% endif %}" />
+
+                                        </td>
+                                        <td>
+                                            <select class="form-control" id="status" name="status">
+                                                <option value="1" {% if radio_station.status == '1' %}selected{% endif %}>{{_('Active',2)}}</option>
+                                                <option value="0" {% if radio_station.status == '0' %}selected{% endif %}>{{_('Inactive',2)}}</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <a class="btn btn-danger btn-xs delete-radio" href="javascript:void(0)" title="{{_('Delete Radio Station',2)}}">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <button type="button" class="btn btn-primary update-radio" value="radio-settings">{{_('Update',2)}}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

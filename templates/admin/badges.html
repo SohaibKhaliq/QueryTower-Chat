@@ -1,0 +1,110 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{  url('dashboard') }}">{{_("Dashboard",2)}}</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{{_("badge",2)}}</li>
+  </ol>
+</nav>
+
+<!-- Content Row -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-badge-settings">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    {{_('Badge Settings',2)}}
+                </h6>
+            </div>
+            <div class="card-body">
+                <form id="badge-settings" enctype='multipart/form-data'>
+                    {{ csrf_token()|raw }}
+                    <div class="form-group">
+                        <label for="enable_badges">{{_('Enable Badges',2)}}</label>
+                        <select class="form-control col-md-6" id="enable_badges" name="enable_badges">
+                            <option value="0" {% if SETTINGS.enable_badges == 0 %}selected{% endif %}>{{_('No',2)}}</option>
+                            <option value="1" {% if SETTINGS.enable_badges == 1 %}selected{% endif %}>{{_('Yes',2)}}</option>
+                        </select>
+                    </div>
+                    <div class="enable-badge-area table-responsive" {% if SETTINGS.enable_badges == 0 %}style="display:none;"{% endif %}>
+                        <div class="row">
+                            <div class="col">
+                                <div class="text-right mb-2">
+                                    <a href="javascript:void(0)" class="btn btn-primary btn-xs add-new-badge">{{_("Add New Badge",2)}}</a>
+                                </div>
+                            </div>
+                        </div>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>{{_("Name",2)}}</th>
+                                    <th>{{_("Image",2)}}</th>
+                                    <th>{{_("Status",2)}}</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody class="badge-list">
+                                <tr class="hidden-row">
+                                    <td>
+                                        <input type="hidden" id="id" name="id" value="" />
+                                        <input class="form-control" type="text" id="name" name="name" value="" placeholder="{{_('Badge Name',2)}}"/>
+                                    </td>
+                                    <td>
+                                        <label class="btn btn-sm btn-badge-icon-upload">
+                                            <i class="fas fa-camera"></i>
+                                            <input type="file" class="upload-badge-icon" data-image="" name="upload-badge-icon" value="Upload Photo">
+                                        </label>
+                                        <img class="badge-icon" id='badge-icon' src="" alt="" />
+                                    </td>
+                                    <td>
+                                        <select class="form-control" id="status" name="status">
+                                            <option value="1">{{_('Active',2)}}</option>
+                                            <option value="0">{{_('Inactive',2)}}</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <a class="btn btn-danger btn-xs delete-badge" href="javascript:void(0)" title="{{_('Delete Badge',2)}}">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% for badge in badges %}
+                                    <tr>
+                                        <td>
+                                            <input type="hidden" id="id" name="id" value="{{ badge.id }}" />
+                                            <input class="form-control" type="text" id="name" name="name" value="{{ badge.name }}" placeholder="{{_('Badge Name',2)}}" />
+                                        </td>
+                                        <td>
+                                            <label class="btn btn-sm btn-badge-icon-upload">
+                                                <i class="fas fa-camera"></i>
+                                                <input type="file" class="upload-badge-icon" data-image="" name="upload-badge-icon" value="Upload Photo">
+                                            </label>
+                                            <img class="badge-icon" id='badge-icon' src="{% if badge.icon %}{{MEDIA_URL}}/settings/{{ badge.icon }}{% endif %}" />
+
+                                        </td>
+                                        <td>
+                                            <select class="form-control" id="status" name="status">
+                                                <option value="1" {% if badge.status == '1' %}selected{% endif %}>{{_('Active',2)}}</option>
+                                                <option value="0" {% if badge.status == '0' %}selected{% endif %}>{{_('Inactive',2)}}</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <a class="btn btn-danger btn-xs delete-badge" href="javascript:void(0)" title="{{_('Delete Badge',2)}}">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <button type="button" class="btn btn-primary update-badge" value="badge-settings">{{_('Update',2)}}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

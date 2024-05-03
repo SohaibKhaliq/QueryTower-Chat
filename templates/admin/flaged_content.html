@@ -1,0 +1,116 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{  url('dashboard') }}">{{_("Dashboard")}}</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{{_("Flaged Content")}}</li>
+  </ol>
+</nav>
+
+<!-- Content Row -->
+<div class="row ">
+    <div class="col-md-12">
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <label>{{_("Flaged Type")}}</label>
+                        <select class="form-control report_type" name="report_type" id='report_type'>
+                            <option value="">{{_("All")}}</option>
+                            <option value="1">{{_("Flaged Chats")}}</option>
+                            <option value="2">{{_("Flaged Users")}}</option>
+                            <option value="3">{{_("Flaged Rooms")}}</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label>{{_("Flaged Status")}}</label>
+                        <select class="form-control report_status" name="report_status" id='report_status'>
+                            <option value="">{{_("All")}}</option>
+                            <option value="1">{{_("Flaged")}}</option>
+                            <option value="2">{{_("Solved")}}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    {{_("Flaged Content")}}
+                </h6>
+
+            </div>
+            <div class="card-body">
+                <div class="row ">
+                    <div class="col-md-8">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="flaged_content" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>{{_("Id")}}</th>
+                                        <th>{{_("Type")}}</th>
+                                        <th>{{_("Reason")}}</th>
+                                        <th>{{_("Flaged at")}}</th>
+                                        <th>{{_("Status")}}</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-md-4 flaged-view-html" style="display:none;">
+                        <div class="card text-white bg-dark">
+                            <div class="card-header d-flex flex-row align-items-center justify-content-between">
+                                <h6 class="m-0 font-weight-bold text-primary report-head"></h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-4 report-section-title"></div>
+                                    <div class="col-8 report-section"></div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-4">{{_("Reason")}}</div>
+                                    <div class="col-8 report-reason"></div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-4">{{_("Comment")}}</div>
+                                    <div class="col-8 report-comment"></div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-4">{{_("Flaged by")}}</div>
+                                    <div class="col-8 report-flaged-by"></div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-4">{{_("Flaged at")}}</div>
+                                    <div class="col-8 report-flaged-at"></div>
+                                </div>
+                                <hr>
+                                <div class="d-flex justify-content-around">
+                                    <div class="flaged-deactive"></div>
+                                    <div class="flaged-solve"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+    getFlagedContent();
+</script>
+{% endblock %}

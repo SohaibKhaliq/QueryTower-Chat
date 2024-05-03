@@ -1,0 +1,39 @@
+<div class="modal report-modal fade animate__animated" id="modalReport" tabindex="-1" role="dialog" aria-labelledby="modalProfileTitle" aria-hidden="true">
+    <div class="modal-dialog " role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalReportTitle">{{_("Report")}}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="report-form">
+                    <input type="hidden" id="submit_report_url" value="{{url('ajax-submit-report')}}">
+                    <input type="hidden" id="report_for" value="">
+                    <input type="hidden" id="report_type" value="">
+                    <input type="hidden" id="chat_type" value="">
+                    {{ csrf_token()|raw }}
+
+                    <div class="form-group row">
+                        <label for="report_reason" class="col-sm-4 col-form-label">{{_("Report Reason")}}</label>
+                        <div class="col-sm-8">
+                            <select class="form-control" id="report_reason" name="report_reason">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-12 ">
+                            <label for="report_comment" class=""></label>
+                            <textarea name="report_comment" id="report_comment" rows="6" class="form-control" placeholder="{{_("Additional Details")}}"></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{_("Close")}}</button>
+                <button type="button" class="btn btn-primary submit-report">{{_("Submit Report")}}</button>
+            </div>
+        </div>
+    </div>
+</div>

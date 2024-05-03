@@ -1,0 +1,70 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{  url('dashboard') }}">{{_("Dashboard",2)}}</a></li>
+    <li class="breadcrumb-item" aria-current="page">{{_("Reports",2)}}</li>
+    <li class="breadcrumb-item active" aria-current="page">{{_('IP logs',2)}}</li>
+  </ol>
+</nav>
+
+<!-- Content Row -->
+<div class="row ">
+    <div class="col-md-12">
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <label>{{_("Type",2)}}</label>
+                        <select class="form-control log_type" name="log_type" id='log_type'>
+                            <option value="">{{_("All",2)}}</option>
+                            <option value="1">{{_("Login",2)}}</option>
+                            <option value="2">{{_("Register",2)}}</option>
+                            <option value="3">{{_("Password Reset",2)}}</option>
+                            <option value="4">{{_("Logout",2)}}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    {{_("IP logs",2)}}
+                </h6>
+
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="ip_logs" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>{{_("IP",2)}}</th>
+                                <th>{{_("Country",2)}}</th>
+                                <th>{{_("Device",2)}}</th>
+                                <th>{{_("Email",2)}}</th>
+                                <th>{{_("Time",2)}}</th>
+                                <th>{{_("Type",2)}}</th>
+                                <th>{{_("Message",2)}}</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+    getIPLogs();
+</script>
+{% endblock %}

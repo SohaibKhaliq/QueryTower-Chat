@@ -1,0 +1,43 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{  url('dashboard') }}">{{_("Dashboard",2)}}</a></li>
+    <li class="breadcrumb-item">{{_("Settings",2)}}</li>
+    <li class="breadcrumb-item active" aria-current="page">{{_("Fonts",2)}}</li>
+  </ol>
+</nav>
+
+<!-- Content Row -->
+<div class="row">
+    <div class="col-md-8">
+        <div class="card card-font-settings">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    {{_("Font Settings",2)}}
+                </h6>
+            </div>
+            <div class="card-body">
+                <form id="font-settings">
+                    {{ csrf_token()|raw }}
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <label class="" for="google_font_family">{{_("Google Font Family",2)}}</label>
+                            <select class="form-control select2" id="google_font_family" name="google_font_family">
+                                <option value=""> -- </option>
+                                {% for google_font in google_font_list %}
+                                    <option value="{{google_font}}" {% if SETTINGS.google_font_family == google_font %}selected{% endif %}>{{google_font}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-primary update-settings" value="font-settings">{{_("Update",2)}}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

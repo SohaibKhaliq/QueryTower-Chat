@@ -1,0 +1,89 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{  url('dashboard') }}">{{_("Dashboard",2)}}</a></li>
+    <li class="breadcrumb-item"><a href="{{  url('dashboard-languages') }}">{{_("Languages",2)}}</a></li>
+    {% if language %}
+        <li class="breadcrumb-item active" aria-current="page">{{language.name}}</li>
+    {% else %}
+        <li class="breadcrumb-item active" aria-current="page">{{_("Add Languages",2)}}</li>
+    {% endif %}
+  </ol>
+</nav>
+
+<!-- Content Row -->
+<div class="row ">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    {{edit_type_name}} {{_("Language",2)}}
+                </h6>
+            </div>
+            <div class="card-body card-language">
+                <form id="language-form" >
+                    {{ csrf_token()|raw }}
+                    <div class="form-group">
+                        <label for="code">ISO 639-1 language Code</label>
+                        <input type="hidden" name="edit_type" value="{{edit_type}}">
+                        {% if edit_type == "update" %}
+                            <input type="text" class="form-control" readonly
+                            id="code" name="code" placeholder="Code" value="{{language.code}}">
+                        {% else %}
+                            <select class="form-control select2" id="code" name="code">
+                                <option value=""></option>
+                                {% for lang_country, lang_code in language_code_list %}
+                                    <option {% if language.code == lang_code %}selected{% endif %} value="{{ lang_code }}">{{ lang_code }} - {{lang_country}}</option>
+                                {% endfor %}
+                            </select>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label for="name">{{_("Name",2)}}</label>
+                        <input type="text" class="form-control" id="name" name="name" placeholder="Name" value="{{language.name}}">
+                    </div>
+                    <div class="form-group">
+                        <label for="country">ISO 3166-1 alpha-2 Country Code</label>
+                        <select class="form-control select2" id="country" name="country">
+                            <option value=""></option>
+                            {% for country_code, country_name in country_list %}
+                                <option {% if language.country == country_code|lower %}selected{% endif %} value="{{ country_code|lower }}">{{ country_code }} - {{ country_name }}</option>
+                            {% endfor %}
+                        </select>
+
+                    </div>
+
+                    <div class="form-group">
+                        <label for="country">Language Direction</label>
+                        <select class="form-control" id="direction" name="direction">
+                            <option value="ltr" {{language.direction=='ltr'?'selected'}}>Left to Right (LTR)</option>
+                            <option value="rtl" {{language.direction=='rtl'?'selected'}}>Right to Left (RTL)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="" for="google_font_family">{{_("Google Font Family",2)}}</label>
+                        <select class="form-control select2" id="google_font_family" name="google_font_family">
+                            <option value=""> -- </option>
+                            {% for google_font in google_font_list %}
+                                <option value="{{google_font}}" {% if language.google_font_family == google_font %}selected{% endif %}>{{google_font}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <button type="button" class="btn btn-primary update-language" >
+                        {% if edit_type == "update" %}
+                            {{_("Update",2)}}
+                        {% else %}
+                            {{_("Insert",2)}}
+                        {% endif %}
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

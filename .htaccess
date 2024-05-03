@@ -1,0 +1,19 @@
+# ChatNet by OnCodes
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    # RewriteCond %{HTTPS} !=on
+    # RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301,NE]
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.php [QSA,L]
+</IfModule>
+
+
+
+# If you get 'No input file specified'. message or you have problems with FastCGI.
+# Remove (#) from beginning Options +ExecCGI.
+# Options +ExecCGI
+
+# If ChatNet is not working on a subdomain or in your hosting try adding the following
+# line after RewriteEngine On
+# RewriteBase /

@@ -1,0 +1,116 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{  url('dashboard') }}">{{_("Dashboard",2)}}</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{{_("Social Login",2)}}</li>
+  </ol>
+</nav>
+
+<!-- Content Row -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-social-login-settings">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    {{_('Social Login Settings',2)}}
+                </h6>
+            </div>
+            <div class="card-body">
+                <form id="social-login-settings">
+                    {{ csrf_token()|raw }}
+
+                    <div class="form-group">
+                        <label for="enable_social_login ">{{_('Enable Social Login',2)}}</label>
+                        <select class="form-control col-md-6" id="enable_social_login" name="enable_social_login">
+                            <option value="0" {% if SETTINGS.enable_social_login == 0 %}selected{% endif %}>{{_('No',2)}}</option>
+                            <option value="1" {% if SETTINGS.enable_social_login == 1 %}selected{% endif %}>{{_('Yes',2)}}</option>
+                        </select>
+                    </div>
+                    <div class="enable-social-login-area table-responsive" {% if SETTINGS.enable_social_login == 0 %}style="display:none;"{% endif %}>
+                        <div class="form-group">
+                            <label for="callback_url ">{{_('Call Back URL',2)}} </label>
+                            <code>{{ url('sociallogin-callback') }}</code>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="text-right mb-2">
+                                    <a href="javascript:void(0)" class="btn btn-primary btn-xs add-new-auth-provider">{{_("Add New Auth Provider",2)}}</a>
+                                </div>
+                            </div>
+                        </div>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>{{_("Icon",2)}}</th>
+                                    <th>{{_("Provider",2)}}</th>
+                                    <th>{{_("ID",2)}}</th>
+                                    <th>{{_("Secret Key",2)}}</th>
+                                    <th>{{_("Status",2)}}</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody class="auth-provider-list">
+                                <tr class="hidden-row">
+                                    <td><img class="auth-provider-icon" src="{{STATIC_URL}}/img/auth_icons/{{ auth_providers[0].name }}.png" alt="" /></td>
+                                    <td>
+                                        <select class="form-control auth-provider-name" id="name" name="name">
+                                            {% for auth_provider in auth_providers %}
+                                            <option value="{{auth_provider.name}}">{{auth_provider.name}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </td>
+                                    <td><input class="form-control" type="text" id="id_key" name="id_key" value="" placeholder="{{_('ID Key',2)}}"></td>
+                                    <td><input class="form-control" type="text" id="secret_key" name="secret_key" value="" placeholder="{{_('Secret Key',2)}}"></td>
+                                    <td>
+                                        <select class="form-control" id="status" name="status">
+                                            <option value="1">{{_('Active',2)}}</option>
+                                            <option value="0">{{_('Inactive',2)}}</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <a class="btn btn-danger btn-xs delete-auth-provider" href="javascript:void(0)" title="{{_('Delete Auth Provider',2)}}">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% for my_social in my_social_logins %}
+                                    <tr>
+                                        <td><img class="auth-provider-icon" src="{{STATIC_URL}}/img/auth_icons/{{ my_social.name }}.png" alt="{{ my_social.name }}" /></td>
+                                        <td>
+                                            <select class="form-control auth-provider-name" id="name" name="name">
+                                                {% for auth_provider in auth_providers %}
+                                                    <option value="{{auth_provider.name}}"
+                                                    {% if auth_provider.name == my_social.name %}selected{% endif %}
+                                                    >{{auth_provider.name}}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </td>
+                                        <td><input class="form-control" type="text" id='id_key' name="id_key" value="{{ my_social.id_key }}" placeholder="{{_('ID Key',2)}}"></td>
+                                        <td><input class="form-control" type="text" id='secret_key' name="secret_key" value="{{ my_social.secret_key }}" placeholder="{{_('Secret Key',2)}}"></td>
+                                        <td>
+                                            <select class="form-control" id="status" name="status">
+                                                <option value="1" {% if my_social.status == '1' %}selected{% endif %}>{{_('Active',2)}}</option>
+                                                <option value="0" {% if my_social.status == '0' %}selected{% endif %}>{{_('Inactive',2)}}</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <a class="btn btn-danger btn-xs delete-auth-provider" href="javascript:void(0)" title="{{_('Delete Auth Provider',2)}}">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <button type="button" class="btn btn-primary update-social-login" value="social-login-settings">{{_('Update',2)}}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

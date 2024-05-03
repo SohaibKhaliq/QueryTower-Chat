@@ -1,0 +1,129 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{  url('dashboard') }}">{{_("Dashboard",2)}}</a></li>
+    <li class="breadcrumb-item">{{_("Settings",2)}}</li>
+    <li class="breadcrumb-item active" aria-current="page">{{_("General",2)}}</li>
+  </ol>
+</nav>
+
+<!-- Content Row -->
+<div class="row ">
+    <div class="col-md-8">
+        <div class="card card-general-settings">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    {{_("General Settings",2)}}
+                </h6>
+            </div>
+            <div class="card-body">
+                <form id="general-settings">
+                    {{ csrf_token()|raw }}
+                    <div class="form-group">
+                        <label for="site_name">{{_("Site Name",2)}}</label> <i class="fas fa-info-circle" title="{{_('Name of your website. This will be shown on browser title and on search engines',2)}}" data-toggle="tooltip" data-placement="top"></i>
+                        <input type="text" class="form-control" id="site_name" name="site_name" placeholder='{{_("Site Name",2)}}' value="{{SETTINGS.site_name}}">
+                    </div>
+                    <div class="form-group">
+                        <label for="site_description">{{_('Site description',2)}}</label> <i class="fas fa-info-circle" title="{{_('This will be shown on search engine result pages',2)}}" data-toggle="tooltip" data-placement="top"></i>
+                        <textarea name="site_description" id="site_description" class="form-control" rows="2" cols="80">{{SETTINGS.site_description}}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="site_tagline">{{_("Site tagline",2)}}</label> <i class="fas fa-info-circle" title="{{_('This will be shown on browser title and on search engines ',2)}}" data-toggle="tooltip" data-placement="top"></i>
+                        <input type="text" class="form-control" id="site_tagline" name="site_tagline" placeholder='{{_("Site tagline",2)}}' value="{{SETTINGS.site_tagline}}">
+                    </div>
+                    <div class="form-group">
+                        <label for="timezone">{{_("Tiemzone",2)}}</label> <i class="fas fa-info-circle" title="{{_('Default timezone of the system. Users time zone will be auto detected and can be changed in their profiles',2)}}" data-toggle="tooltip" data-placement="top"></i>
+                        <select class="form-control select2" id="timezone" name="timezone">
+                            {{timezone_list|raw}}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="timezone">Default Language</label> <i class="fas fa-info-circle" title="{{_('Default language users see when they first visit the site. They will be able to change the language if you allow multiple language support. You can add languages in Language settings.',2)}}" data-toggle="tooltip" data-placement="top"></i>
+                        <select class="form-control" id="default_lang" name="default_lang">
+                            {% for lang in lang_list %}
+                                <option value="{{lang.code}}"
+                                    {% if lang.code == SETTINGS.default_lang %}selected{% endif %}
+                                >{{lang.name}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for="single_room_mode">{{_("Single Room Mode",2)}}</label> <i class="fas fa-info-circle" title="{{_('Setting yes will disable the homepage and will show the default chat room first',2)}}" data-toggle="tooltip" data-placement="top"></i>
+                            <select class="form-control" id="single_room_mode" name="single_room_mode">
+                                <option value="0" {% if SETTINGS.single_room_mode == 0 %}selected{% endif %}>{{_("Inactive",2)}}</option>
+                                <option value="1" {% if SETTINGS.single_room_mode == 1 %}selected{% endif %}>{{_("Active",2)}}</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-6 default-room-area"
+                            {% if SETTINGS.single_room_mode == 1 %}
+                                style="display:block;"
+                            {% else %}
+                                style="display:none;"
+                            {% endif %}
+                        >
+                            <label for="default_room_slug">{{_('Default Chat Room',2)}}</label> <i class="fas fa-info-circle" title="{{_('If Single Room Mode is active, this room will be visible when users first visit your website.',2)}}" data-toggle="tooltip" data-placement="top"></i>
+                            <select class="form-control" id="default_room_slug" name="default_room_slug">
+                                {% for chatroom in chatroom_list %}
+                                    <option value="{{chatroom.slug}}"
+                                        {% if chatroom.slug == SETTINGS.default_room_slug %}selected{% endif %}
+                                    >{{chatroom.name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="room_auto_join">{{_("Auto Join Users to Chat Rooms on First Visit",2)}}</label> <i class="fas fa-info-circle" title="{{_('If yes, users will not be asked to click on the Join Room button to join the room. This can be overwritten in each chat room settings.',2)}}" data-toggle="tooltip" data-placement="top"></i>
+                        <select class="form-control" id="room_auto_join" name="room_auto_join">
+                            <option value="0" {% if SETTINGS.room_auto_join == 0 %}selected{% endif %}>{{_("No",2)}}</option>
+                            <option value="1" {% if SETTINGS.room_auto_join == 1 %}selected{% endif %}>{{_("Yes",2)}}</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="enable_members_room">{{_("Let Members Create Rooms",2)}}</label> <i class="fas fa-info-circle" title="{{_('Let your users to create chat rooms. They can moderate their own rooms and add their own room moderators.',2)}}" data-toggle="tooltip" data-placement="top"></i>
+                        <select class="form-control" id="enable_members_room" name="enable_members_room">
+                            <option value="0" {% if SETTINGS.enable_members_room == 0 %}selected{% endif %}>{{_("No",2)}}</option>
+                            <option value="1" {% if SETTINGS.enable_members_room == 1 %}selected{% endif %}>{{_("Yes",2)}}</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="enable_moderators_room">{{_("Let Moderator Create Rooms",2)}}</label> <i class="fas fa-info-circle" title="{{_('Let global moderators to create chat rooms. They can moderate their own rooms and add their own room moderators',2)}}" data-toggle="tooltip" data-placement="top"></i>
+                        <select class="form-control" id="enable_moderators_room" name="enable_moderators_room">
+                            <option value="0" {% if SETTINGS.enable_moderators_room == 0 %}selected{% endif %}>{{_("No",2)}}</option>
+                            <option value="1" {% if SETTINGS.enable_moderators_room == 1 %}selected{% endif %}>{{_("Yes",2)}}</option>
+                        </select>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-4">
+                            <label for="cookie_consent_popup">{{_("Cookie Consent Popup",2)}}</label>
+                            <select class="form-control" id="cookie_consent_popup" name="cookie_consent_popup">
+                                <option value="0" {% if SETTINGS.cookie_consent_popup == 0 %}selected{% endif %}>{{_("Inactive",2)}}</option>
+                                <option value="1" {% if SETTINGS.cookie_consent_popup == 1 %}selected{% endif %}>{{_("Active",2)}}</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-8 cookie-message-area" {% if SETTINGS.cookie_consent_popup == 0 %}style="display:none;"{% endif %}>
+                            <label for="cookie_consent_message">{{_("Cookie Consent Message",2)}}</label>
+                            <input type="text" class="form-control" id="cookie_consent_message" name="cookie_consent_message" placeholder='{{_("Cookie Consent Message",2)}}' value="{{SETTINGS.cookie_consent_message}}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="allow_multiple_sessions">{{_("Allow Multiple Sessions?",2)}}</label> <i class="far fa-info-circle" title="{{_('Let members login via different devices parallelly',2)}}" data-toggle="tooltip" data-placement="top"></i>
+                        <select class="form-control" id="allow_multiple_sessions" name="allow_multiple_sessions">
+                            <option value="1" {% if SETTINGS.allow_multiple_sessions == 1 %}selected{% endif %}>{{_("Yes",2)}}</option>
+                            <option value="0" {% if SETTINGS.allow_multiple_sessions == 0 %}selected{% endif %}>{{_("No",2)}}</option>
+                        </select>
+                        <small class="text-mute"></small>
+                    </div>
+
+                    <button type="button" class="btn btn-primary update-settings" value="general-settings">{{_("Update",2)}}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

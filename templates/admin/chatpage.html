@@ -1,0 +1,306 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{  url('dashboard') }}">{{_("Dashboard",2)}}</a></li>
+    <li class="breadcrumb-item">{{_("Settings",2)}}</li>
+    <li class="breadcrumb-item active" aria-current="page">{{_("Chat Settings",2)}}</li>
+  </ol>
+</nav>
+
+<!-- Content Row -->
+<div class="row">
+    <div class="col-md-8">
+        <div class="card card-chatpage-settings">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    {{_("Chat Page Settings",2)}}
+                </h6>
+            </div>
+            <div class="card-body">
+                <form id="chatpage-settings">
+                    {{ csrf_token()|raw }}
+                    <div class="form-group row">
+                        <label class="col-sm-5 col-form-label" for="max_message_length">{{_("Message Length",2)}}</label>
+                        <div class="col-sm-7">
+                            <input type="number" class="form-control" id="max_message_length" name="max_message_length" value="{{SETTINGS.max_message_length|default('1000')}}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="chat_notice_message">{{_("Chat page notice message",2)}}</label>
+                        <textarea name="chat_notice_message" id="chat_notice_message" class="form-control" rows="5" cols="80">{{SETTINGS.chat_notice_message|htmlspecialchars_decode|raw}}</textarea>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-5 col-form-label" for="chat_notice_class">{{_("Chat page notice style",2)}}</label>
+                        <div class="col-sm-7">
+                            <select class="form-control" name="chat_notice_class" id="chat_notice_class">
+                                <option value="success" {% if SETTINGS.chat_notice_class == "success" %}selected{% endif %} >Success</option>
+                                <option value="warning" {% if SETTINGS.chat_notice_class == "warning" %}selected{% endif %} >Warning</option>
+                                <option value="danger" {% if SETTINGS.chat_notice_class == "danger" %}selected{% endif %} >Danger</option>
+                                <option value="primary" {% if SETTINGS.chat_notice_class == "primary" %}selected{% endif %} >Primary</option>
+                                <option value="secondary" {% if SETTINGS.chat_notice_class == "secondary" %}selected{% endif %} >Secondary</option>
+                                <option value="info" {% if SETTINGS.chat_notice_class == "info" %}selected{% endif %} >Info</option>
+                                <option value="light" {% if SETTINGS.chat_notice_class == "light" %}selected{% endif %} >Light</option>
+                                <option value="dark" {% if SETTINGS.chat_notice_class == "dark" %}selected{% endif %} >Dark</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-5 col-form-label" for="display_name_format">{{_("Display name format",2)}}</label>
+                        <div class="col-sm-7">
+                            <select class="form-control" name="display_name_format" id="display_name_format">
+                                <option value="fullname" {% if SETTINGS.display_name_format == "fullname" %}selected{% endif %} >{{_("Full name",2)}}</option>
+                                <option value="username" {% if SETTINGS.display_name_format == "username" %}selected{% endif %} >{{_("Username",2)}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="form-group row">
+                        <label class="col-sm-5 col-form-label" for="enable_gif">{{_("Enable GIF",2)}}</label>
+                        <div class="col-sm-7">
+                            <select class="form-control" name="enable_gif" id="enable_gif">
+                                <option value="1" {% if SETTINGS.enable_gif == "1" %}selected{% endif %} >{{_("Yes",2)}}</option>
+                                <option value="0" {% if SETTINGS.enable_gif == "0" %}selected{% endif %} >{{_("No",2)}}</option>
+                            </select>
+                            <a href="{{ url('dashboard-gif') }}"><small>{{_("View GIF Settings",2)}} <i class="fas fa-external-link-alt"></i></small></a>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-5 col-form-label" for="enable_stickers">{{_("Enable Stickers",2)}}</label>
+                        <div class="col-sm-7">
+                            <select class="form-control" name="enable_stickers" id="enable_stickers">
+                                <option value="1" {% if SETTINGS.enable_stickers == "1" %}selected{% endif %} >{{_("Yes",2)}}</option>
+                                <option value="0" {% if SETTINGS.enable_stickers == "0" %}selected{% endif %} >{{_("No",2)}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-5 col-form-label" for="enable_images">{{_("Enable Images",2)}}</label>
+                        <div class="col-sm-7">
+                            <select class="form-control" name="enable_images" id="enable_images">
+                                <option value="1" {% if SETTINGS.enable_images == "1" %}selected{% endif %} >{{_("Yes",2)}}</option>
+                                <option value="0" {% if SETTINGS.enable_images == "0" %}selected{% endif %} >{{_("No",2)}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-5 col-form-label" for="enable_images">{{_("Enable Videos",2)}}</label>
+                        <div class="col-sm-7">
+                            <select class="form-control" name="enable_videos" id="enable_videos">
+                                <option value="1" {% if SETTINGS.enable_videos == "1" %}selected{% endif %} >{{_("Yes",2)}}</option>
+                                <option value="0" {% if SETTINGS.enable_videos == "0" %}selected{% endif %} >{{_("No",2)}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-5 col-form-label" for="enable_audioclip">{{_("Enable Audio Messages",2)}}</label>
+                        <div class="col-sm-7">
+                            <select class="form-control" name="enable_audioclip" id="enable_audioclip">
+                                <option value="0" {% if SETTINGS.enable_audioclip == "0" %}selected{% endif %} >{{_("No",2)}}</option>
+                                <option value="1" {% if SETTINGS.enable_audioclip == "1" %}selected{% endif %} >{{_("Yes",2)}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-5 col-form-label" for="enable_codes">{{_("Enable Codes",2)}}</label>
+                        <div class="col-sm-7">
+                            <select class="form-control" name="enable_codes" id="enable_codes">
+                                <option value="0" {% if SETTINGS.enable_codes == "0" %}selected{% endif %} >{{_("No",2)}}</option>
+                                <option value="1" {% if SETTINGS.enable_codes == "1" %}selected{% endif %} >{{_("Yes",2)}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-5 col-form-label" for="enable_files">{{_("Enable Files",2)}}</label>
+                        <div class="col-sm-7">
+                            <select class="form-control" name="enable_files" id="enable_files">
+                                <option value="0" {% if SETTINGS.enable_files == "0" %}selected{% endif %} >{{_("No",2)}}</option>
+                                <option value="1" {% if SETTINGS.enable_files == "1" %}selected{% endif %} >{{_("Yes",2)}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group enable-filelist-area" {% if SETTINGS.enable_files == 0 %}style="display:none;"{% endif %}>
+                        <label for="enable_file_list">{{_('File Extenstion List',2)}}</label>
+                        <textarea name="enable_file_list" id="enable_file_list" class="form-control" rows="2" cols="80">{{SETTINGS.enable_file_list|default('.doc, .docs, .xls, .xlsx, .ppt, .pptx, .zip, .txt')}}</textarea>
+                        <small id="bad_words_help" class="form-text text-muted">
+                            {{_('File extenstion list must be comma separated list. Ex: .doc, .xls, .zip, .txt',2)}}
+                        </small>
+                    </div>
+                    <hr>
+                    <div class="form-group row">
+                        <label class="col-sm-5 col-form-label" for="list_show_gender">{{_("Show gender icon in user list",2)}}</label>
+                        <div class="col-sm-7">
+                            <select class="form-control" name="list_show_gender" id="list_show_gender">
+                                <option value="1" {% if SETTINGS.list_show_gender == "1" %}selected{% endif %} >{{_("Yes",2)}}</option>
+                                <option value="0" {% if SETTINGS.list_show_gender == "0" %}selected{% endif %} >{{_("No",2)}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-5 col-form-label" for="list_show_country">{{_("Show country flag in user list",2)}}</label>
+                        <div class="col-sm-7">
+                            <select class="form-control" name="list_show_country" id="list_show_country">
+                                <option value="1" {% if SETTINGS.list_show_country == "1" %}selected{% endif %} >{{_("Yes",2)}}</option>
+                                <option value="0" {% if SETTINGS.list_show_country == "0" %}selected{% endif %} >{{_("No",2)}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-5 col-form-label" for="list_show_user_type">{{_("Show user type in user list",2)}}</label>
+                        <div class="col-sm-7">
+                            <select class="form-control" name="list_show_user_type" id="list_show_user_type">
+                                <option value="0" {% if SETTINGS.list_show_user_type == "0" %}selected{% endif %} >{{_("No",2)}}</option>
+                                <option value="1" {% if SETTINGS.list_show_user_type == "1" %}selected{% endif %} >{{_("Yes",2)}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-5 col-form-label" for="sent_animation">{{_("Sent chat animation",2)}}</label>
+                        <div class="col-sm-7">
+                            <input type="text" class="form-control" name="sent_animation" id="sent_animation" value="{{SETTINGS.sent_animation|default('animate__fadeIn animate__slow')}}">
+                            <small class="form-text text-muted">
+                                {{_('CSS class name from ',2)}}<a href="https://animate.style/" target="_blank">https://animate.style/</a>
+                            </small>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-5 col-form-label" for="replies_animation">{{_("Receive chat animation",2)}}</label>
+                        <div class="col-sm-7">
+                            <input type="text" class="form-control" name="replies_animation" id="replies_animation" value="{{SETTINGS.replies_animation|default('animate__fadeIn')}}">
+                            <small class="form-text text-muted">
+                                {{_('CSS class name from ',2)}}<a href="https://animate.style/" target="_blank">https://animate.style/</a>
+                            </small>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-5 col-form-label" for="chat_load_type">{{_("Load group chats from",2)}}</label>
+                        <div class="col-sm-7">
+                            <select class="form-control" name="chat_load_type" id="chat_load_type">
+                                <option value="1" {% if SETTINGS.chat_load_type == "1" %}selected{% endif %} >{{_("the begining",2)}}</option>
+                                <option value="2" {% if SETTINGS.chat_load_type == "2" %}selected{% endif %} >{{_("user's group joined time",2)}}</option>
+                                <option value="3" {% if SETTINGS.chat_load_type == "3" %}selected{% endif %} >{{_("user's loged-in time",2)}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-5 col-form-label" for="hide_chat_list">{{_("Disable user list & direct messages",2)}}</label>
+                        <div class="col-sm-7">
+                            <select class="form-control" name="hide_chat_list" id="hide_chat_list">
+                                <option value="0" {% if SETTINGS.hide_chat_list == "0" %}selected{% endif %} >{{_("No",2)}}</option>
+                                <option value="1" {% if SETTINGS.hide_chat_list == "1" %}selected{% endif %} >{{_("Yes",2)}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <span class="chat-list-setting-area" {% if SETTINGS.hide_chat_list == 1 %}style="display:none;"{% endif %}>
+                        <div class="form-group row">
+                            <label class="col-sm-5 col-form-label" for="disable_private_chats">{{_("Disable direct messages only",2)}}</label>
+                            <div class="col-sm-7">
+                                <select class="form-control" name="disable_private_chats" id="disable_private_chats">
+                                    <option value="0" {% if SETTINGS.disable_private_chats == "0" %}selected{% endif %} >{{_("No",2)}}</option>
+                                    <option value="1" {% if SETTINGS.disable_private_chats == "1" %}selected{% endif %} >{{_("Yes",2)}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-5 col-form-label" for="disable_group_chats">{{_("Disable room/group chats only",2)}}</label>
+                            <div class="col-sm-7">
+                                <select class="form-control" name="disable_group_chats" id="disable_group_chats">
+                                    <option value="0" {% if SETTINGS.disable_group_chats == "0" %}selected{% endif %} >{{_("No",2)}}</option>
+                                    <option value="1" {% if SETTINGS.disable_group_chats == "1" %}selected{% endif %} >{{_("Yes",2)}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-5 col-form-label" for="user_list_type">{{_("User list type",2)}}</label>
+                            <div class="col-sm-7">
+                                <select class="form-control" name="user_list_type" id="user_list_type">
+                                    <option value="1" {% if SETTINGS.user_list_type == "1" %}selected{% endif %} >{{_("Show all users",2)}}</option>
+                                    <option value="2" {% if SETTINGS.user_list_type == "2" %}selected{% endif %} >{{_("Show online users only",2)}}</option>
+                                    <option value="3" {% if SETTINGS.user_list_type == "3" %}selected{% endif %} >{{_("Show authorized roles only",2)}}</option>
+                                    <option value="4" {% if SETTINGS.user_list_type == "4" %}selected{% endif %} >{{_("Show linked users only",2)}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row user-list-auth-roles" {% if SETTINGS.user_list_type != 3 %}style="display:none"{% endif %}>
+                            <label class="col-sm-5 col-form-label" for="user_list_auth_roles">{{_("Users can only chat with",2)}}</label>
+                            <div class="col-sm-7">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <label class="switch">
+                                            <input type="checkbox" name="user_list_auth_roles[]" id="user_list_auth_admin"  value="1"
+                                                {% if 1 in SETTINGS.user_list_auth_roles %} checked {% endif %}>
+                                                <span class="slider round"></span>
+                                        </label>
+                                        <label class="col-form-label" for="user_list_auth_admin">
+                                            {{_("Admins",2)}}
+                                        </label>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label class="switch">
+                                            <input type="checkbox" name="user_list_auth_roles[]" id="user_list_auth_mod"  value="4"
+                                                {% if 4 in SETTINGS.user_list_auth_roles %} checked {% endif %}>
+                                                <span class="slider round"></span>
+                                        </label>
+                                        <label class="col-form-label" for="user_list_auth_mod">
+                                            {{_("Moderators",2)}}
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <label class="switch">
+                                            <input type="checkbox" name="user_list_auth_roles[]" id="user_list_auth_creator"  value="creator"
+                                                {% if 'creator' in SETTINGS.user_list_auth_roles %} checked {% endif %}>
+                                                <span class="slider round"></span>
+                                        </label>
+                                        <label class="col-form-label" for="user_list_auth_creator">
+                                            {{_("Room Creator",2)}}
+                                        </label>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label class="switch">
+                                            <input type="checkbox" name="user_list_auth_roles[]" id="user_list_auth_rm_mod"  value="rm_mod"
+                                                {% if 'rm_mod' in SETTINGS.user_list_auth_roles %} checked {% endif %}>
+                                                <span class="slider round"></span>
+                                        </label>
+                                        <label class="col-form-label" for="user_list_auth_rm_mod">
+                                            {{_("Room Moderators",2)}}
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <label class="switch">
+                                            <input type="checkbox" name="user_list_auth_roles[]" id="user_list_auth_member"  value="2"
+                                                {% if 2 in SETTINGS.user_list_auth_roles %} checked {% endif %}>
+                                                <span class="slider round"></span>
+                                        </label>
+                                        <label class="col-form-label" for="user_list_auth_member">
+                                            {{_("Members",2)}}
+                                        </label>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label class="switch">
+                                            <input type="checkbox" name="user_list_auth_roles[]" id="user_list_auth_guest"  value="3"
+                                                {% if 3 in SETTINGS.user_list_auth_roles %} checked {% endif %}>
+                                                <span class="slider round"></span>
+                                        </label>
+                                        <label class="col-form-label" for="user_list_auth_guest">
+                                            {{_("Guest",2)}}
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </span>
+
+                    <button type="button" class="btn btn-primary update-settings" value="chatpage-settings">{{_("Update",2)}}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

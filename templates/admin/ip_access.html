@@ -1,0 +1,53 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{  url('dashboard') }}">{{_('Dashboard',2)}}</a></li>
+    <li class="breadcrumb-item">{{_('Settings',2)}}</li>
+    <li class="breadcrumb-item active" aria-current="page">{{_('IP Access',2)}}</li>
+  </ol>
+</nav>
+
+<!-- Content Row -->
+<div class="row">
+    <div class="col-md-8">
+        <div class="card card-ip-access-settings">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    {{_('IP Access',2)}}
+                </h6>
+            </div>
+            <div class="card-body">
+                <form id="ip-access-settings">
+                    {{ csrf_token()|raw }}
+                    <div class="form-group">
+                        <label for="enable_ip_logging">{{_('Enable IP Logging',2)}}</label>
+                        <select class="form-control" id="enable_ip_logging" name="enable_ip_logging">
+                            <option value="0" {% if SETTINGS.enable_ip_logging == 0 %}selected{% endif %}>{{_('No',2)}}</option>
+                            <option value="1" {% if SETTINGS.enable_ip_logging == 1 %}selected{% endif %}>{{_('Yes',2)}}</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="enable_ip_blacklist">{{_('Enable IP Blacklist',2)}}</label>
+                        <select class="form-control" id="enable_ip_blacklist" name="enable_ip_blacklist">
+                            <option value="0" {% if SETTINGS.enable_ip_blacklist == 0 %}selected{% endif %}>{{_('No',2)}}</option>
+                            <option value="1" {% if SETTINGS.enable_ip_blacklist == 1 %}selected{% endif %}>{{_('Yes',2)}}</option>
+                        </select>
+                    </div>
+                    <div class="form-group ip-blacklist-area" {% if SETTINGS.enable_ip_blacklist == 0 %}style="display:none;"{% endif %}>
+                        <label for="ip_blacklist">{{_('Black List IPs',2)}}</label>
+                        <textarea name="ip_blacklist" id="ip_blacklist" class="form-control" rows="6" cols="80">{{SETTINGS.ip_blacklist}}</textarea>
+                        <small id="ip_blacklist_help" class="form-text text-muted">
+                            {{_('IP blacklist must be comma separated list. Ex: 111.111.111.111, 222.222.222, 127.1.*',2)}}
+                        </small>
+                    </div>
+                    <button type="button" class="btn btn-primary update-settings" value="ip-access-settings">{{_('Update',2)}}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

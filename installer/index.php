@@ -1,0 +1,1 @@
+<?php include('not_installed.php'); ?>

@@ -1,0 +1,84 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{  url('dashboard') }}">{{_("Dashboard",2)}}</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{{_("Users",2)}}</li>
+  </ol>
+</nav>
+
+<!-- Content Row -->
+<div class="row ">
+    <div class="col-md-12">
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <label>{{_("User Type",2)}}</label>
+                        <select class="form-control user_type" name="user_type" id='user_type'>
+                            <option value="">{{_("All",2)}}</option>
+                            <option value="1">{{_("Admin",2)}}</option>
+                            <option value="2">{{_("Member",2)}}</option>
+                            <option value="4">{{_("Moderator",2)}}</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label>{{_("Status",2)}}</label>
+                        <select class="form-control available_status" name="available_status" id='available_status'>
+                            <option value="">{{_("All",2)}}</option>
+                            <option value="1">{{_("Active",2)}}</option>
+                            <option value="2">{{_("Inactive",2)}}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card card-room-list">
+            <div class="card-header d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    {{_("Members",2)}}
+                </h6>
+                <span>
+                    <input type="checkbox" name="" class="check_all" id="check_all"> <label for="check_all">{{_("Check All",2)}}</label>
+                    <button type="button" class="btn btn-danger delete-selected-user btn-xs">{{_("Delete Selected",2)}}</button> |
+                    <a href="{{  url('dashboard-user-add') }}" class="btn btn-primary btn-xs">{{_("Add New User",2)}}</a>
+                </span>
+
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <form id="user-list" >
+                        {{ csrf_token()|raw }}
+                        <table class="table table-bordered" id="user_list" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th><input type="checkbox" class="check_all" name=""></th>
+                                    <th>{{_("Avatar",2)}}</th>
+                                    <th>{{_("Name",2)}}</th>
+                                    <th>{{_("Username",2)}}</th>
+                                    <th>{{_("Email",2)}}</th>
+                                    <th>{{_("Type",2)}}</th>
+                                    <th>{{_("Status",2)}}</th>
+                                    <th width="25%"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+    getUsers();
+</script>
+{% endblock %}

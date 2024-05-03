@@ -1,0 +1,61 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{  url('dashboard') }}">{{_("Dashboard",2)}}</a></li>
+    <li class="breadcrumb-item">{{_("Settings",2)}}</li>
+    <li class="breadcrumb-item active" aria-current="page">{{_("Contact Us",2)}}</li>
+  </ol>
+</nav>
+
+
+<!-- Content Row -->
+<div class="row">
+    <div class="col-md-8">
+        <div class="card card-policy-settings">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    {{_("Contact Settings",2)}}
+                </h6>
+            </div>
+            <div class="card-body">
+                <form id="contact-settings">
+                    {{ csrf_token()|raw }}
+
+                    <div class="form-group">
+                        <label for="enable_contact">{{_("Enable Contact",2)}}</label>
+                        <select class="form-control" id="enable_contact" name="enable_contact">
+                            <option value="1" {% if SETTINGS.enable_contact == 1 %}selected{% endif %}>{{_("Yes",2)}}</option>
+                            <option value="0" {% if SETTINGS.enable_contact == 0 %}selected{% endif %}>{{_("No",2)}}</option>
+                        </select>
+                    </div>
+                    <hr />
+                    <br />
+                    <span class="enable-contact-area" {% if SETTINGS.enable_contact == 0 %}style="display:none;"{% endif %}>
+                        <div class="form-group">
+                            <label for="contact_us_email">{{_("Contact Email",2)}}</label>
+                            <input type="text" class="form-control" id="contact_us_email" name="contact_us_email" value="{{SETTINGS.contact_us_email}}">
+                        </div>
+                        <div class="form-group">
+                            <label for="contact_us_address_1">{{_("Contact Address 1",2)}}</label>
+                            <input type="text" class="form-control" id="contact_us_address_1" name="contact_us_address_1" value="{{SETTINGS.contact_us_address_1}}">
+                        </div>
+                        <div class="form-group">
+                            <label for="contact_us_address_2">{{_("Contact Address 2",2)}}</label>
+                            <input type="text" class="form-control" id="contact_us_address_2" name="contact_us_address_2" value="{{SETTINGS.contact_us_address_2}}">
+                        </div>
+                        <div class="form-group">
+                            <label for="contact_us_phone">{{_("Contact Phone",2)}}</label>
+                            <input type="text" class="form-control" id="contact_us_phone" name="contact_us_phone" value="{{SETTINGS.contact_us_phone}}">
+                        </div>
+                    </span>
+                    <button type="button" class="btn btn-primary update-settings" value="contact-settings">{{_("Update",2)}}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

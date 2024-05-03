@@ -1,0 +1,29 @@
+{% extends "base.min.html" %}
+{% block container %}
+<div class="container regi">
+    <!-- Outer Row -->
+    <div class="row h-100 justify-content-center align-items-center">
+        <div class="col-xl-10 col-lg-12 col-md-9">
+            <div class="card o-hidden border-0 shadow-lg my-5">
+                <div class="card-body p-0">
+                    <!-- Nested Row within Card Body -->
+                    <div class="row">
+                        {% if chat_room.cover_image %}
+                            <div class="col-lg-6 d-none d-lg-block bg-login-image" style="background-image: url({{MEDIA_URL}}/chatrooms/{{chat_room.cover_image}});"></div>
+                        {% else %}
+                            {% if SETTINGS.login_page_image %}
+                            <div class="col-lg-6 d-none d-lg-block bg-login-image" style="background-image: url({{MEDIA_URL}}/settings/{{SETTINGS.login_page_image}});"></div>
+                            {% else %}
+                            <div class="col-lg-6 d-none d-lg-block bg-login-image"></div>
+                            {% endif %}
+                        {% endif %}
+                        <div class="col-lg-6 form-content">
+                            {% include "login_form.html" %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

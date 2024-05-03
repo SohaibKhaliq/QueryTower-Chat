@@ -1,0 +1,1445 @@
+{% extends "base.html" %}
+
+{% block styles %}
+    {% if chat_room.show_background  %}
+    {% if chat_room.background_image %}
+    .messages:after { 
+        background-image: url("{{MEDIA_URL}}/chatrooms/{{chat_room.background_image}}"); background-size: cover;
+    }
+    {% else %}
+    .messages:after { 
+        background-image: url("{{STATIC_URL}}/img/chatbg.png"); 
+    }
+    {% endif %}  
+    {% endif %}
+    {% if SETTINGS.chatpage_layout == "boxed" %}
+    @media screen and (min-width: 768px) {
+        :root {
+            --height-adustment: 110px;
+        }
+    }
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+
+<!-- Page Wrapper -->
+<div 
+    id="wrapper" 
+    class="{% if view_as_user %}view-as{% endif %}  {% if SETTINGS.chatpage_layout == "boxed" %}boxed-wrapper{% endif %}"
+    {% if SETTINGS.boxed_bg  %}style="background-image:url({{MEDIA_URL}}/settings/{{SETTINGS.boxed_bg }})"{% endif %}
+    >
+    {% if hide_chat_list == false %}
+    <div class="flex-column col-2 chat-list-col ">
+        <!-- Topbar -->
+        <nav class="navbar navbar-expand navbar-light  topbar static-top medium-shadow navbar-profile">
+           {% include "chat_logo.html" %}
+        </nav>
+        <!-- End of Topbar -->
+        <div class="panel-content ">
+            
+            <!-- Nav pills -->
+            <ul class="nav nav-pills nav-justified nav-sidebar nav-ol">
+                <li class="nav-item">
+                    <a class="nav-link active chat-tab list-section" id="room" data-toggle="pill" href="#chats">
+                        <i class="fas fa-comments"></i> {{ _('Room') }}
+                    </a>
+                </li>
+               {% if disable_private_chats == false %}
+                <li class="nav-item">
+                    <a class="nav-link dm-tab list-section {% if not IS_AUTHENTICATED %}show-auth-model{% endif %}" {% if IS_AUTHENTICATED %} id="dm" data-toggle="pill" href="#direct_messages" {% else %} href="javascript:void(0)" {% endif %}>
+                        <i class="fas fa-envelope"></i> {{ _('DM') }}
+                        <span class=" badge-danger dm-all-unread" style="display:none"></span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link fav-tab list-section {% if not IS_AUTHENTICATED %}show-auth-model{% endif %}" {% if IS_AUTHENTICATED %} id="fav" data-toggle="pill" href="#favs" {% else %} href="javascript:void(0)" {% endif %}>
+                        <i class="fas fa-heart"></i> {{ _('Fav') }}
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+           
+            <div class="nav-search">
+                <div class="input-group ">
+                    <input type="text" {% if not IS_AUTHENTICATED %}disabled{% endif %} class="form-control bg-light border-0 small room-user-search" placeholder="{{_('Search users in this room...')}}" aria-label="Search" aria-describedby="basic-addon2">
+                    <div class="input-group-append">
+                        <button {% if not IS_AUTHENTICATED %}disabled{% endif %} class="btn btn-room-user-search" type="button">
+                            <i class="fas fa-search fa-sm"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+             {% if disable_private_chats == false %}
+            <div class="btn-group nav-sidebar-mobile dropleft">
+                <button type="button" class="btn btn-default mobile-sidebar-icon " data-toggle="dropdown"><i class="far fa-comments"></i></button>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item mobile-sidebar-toggle" data-toggle="pill" data-id="room" href="#chats"><i class="far fa-comments"></i> {{ _('Chats') }}</a>
+                    {% if IS_AUTHENTICATED %}
+                    <a class="dropdown-item mobile-sidebar-toggle {% if not IS_AUTHENTICATED %}show-auth-model{% endif %}" {% if IS_AUTHENTICATED %}data-toggle="pill" data-id="dm" href="#direct_messages"{% else %} href="javascript:void(0)" {% endif %}>
+                        <i class="far fa-envelope"></i> {{ _('DM') }}
+                        <span class=" badge-danger dm-all-unread" style="display:none"></span>
+                    </a>
+                    <a class="dropdown-item mobile-sidebar-toggle {% if not IS_AUTHENTICATED %}show-auth-model{% endif %}" {% if IS_AUTHENTICATED %}data-toggle="pill" data-id="fav" href="#favs"{% else %} href="javascript:void(0)" {% endif %}><i class="far fa-heart"></i> {{ _('Favorites') }}</a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+            <!-- Tab panes -->
+            <div class="tab-content tab-sidebar">
+                <div class="tab-pane container active" id="chats">
+                    <div class="online-list "></div>
+                    <div class="online-list-actions">
+                        <button class="btn btn-secondary btn-icon-split btn-xs load-more-users" >
+                            <span class="icon text-white-50">
+                                <i class="fas fa-caret-down"></i>
+                            </span>
+                            <span class="text">{{_('Load More')}}</span>
+                        </button>
+
+                        <button class="btn btn-secondary btn-icon-split btn-xs refresh-user-list" >
+                            <span class="icon text-white-50">
+                                <i class="fas fa-redo"></i>
+                            </span>
+                            <span class="text">{{_('Refresh List')}}</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="tab-pane container fade" id="direct_messages">
+                    <div class="dm-list "></div>
+                    <div class="dm-list-actions">
+                        <button class="btn btn-secondary btn-icon-split btn-xs load-more-dm-users" >
+                            <span class="icon text-white-50">
+                                <i class="fas fa-caret-down"></i>
+                            </span>
+                            <span class="text">{{_('Load More')}}</span>
+                        </button>
+
+                        <button class="btn btn-secondary btn-icon-split btn-xs refresh-dm-list" >
+                            <span class="icon text-white-50">
+                                <i class="fas fa-redo"></i>
+                            </span>
+                            <span class="text">{{_('Refresh List')}}</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="tab-pane container fade" id="favs">
+                    <div class="fav-list "></div>
+                </div>
+            </div>
+
+            {% if chat_room.ad_chat_left_bar %}
+            <div class="advert ad_chat_left_bar responsive">
+                {{chat_room.ad_chat_left_bar|htmlspecialchars_decode|raw}}
+            </div>
+            {% elseif SETTINGS.ad_chat_left_bar %}
+            <div class="advert ad_chat_left_bar {{SETTINGS.ad_chat_left_bar_size}}">
+                {{SETTINGS.ad_chat_left_bar|htmlspecialchars_decode|raw}}
+            </div>
+            {% endif %}
+            <div class="bottom-login-section">
+                <div class="dropup">
+                    <a class="" href="javascript:void(0)" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="dropdown-toggle dropdown-toggle-split user-fname user-dropdown">
+                            <div class="user-avatar">
+                                <div class="current-status online-status {{ USER.user_status_class }}"><i class="fa fa-circle"></i></div>
+                                {% if condition %}{% endif %}
+                                <img class="img-profile mr-2" src="{% if USER.avatar_url %}{{USER.avatar_url}}{% else %}{{STATIC_URL}}/img/user.png{% endif %}">
+                            </div>
+                            <span class="bottom-username">
+                                {% if IS_AUTHENTICATED %}
+                                {% if SETTINGS.display_name_format == 'username' %}
+                                    {{ USER.user_name }}
+                                {% else %}
+                                    {{ USER.first_name }}
+                                {% endif %}
+                                {% else %}
+                                {{ _('Guest') }}
+                                {% endif %}
+                            </span>
+                            
+                        </span>
+                    </a>
+                    <!-- Dropdown - User Information -->
+                    <div class="dropdown-menu dropdown-menu-right lite-shadow" aria-labelledby="userDropdown">
+                        {% if IS_AUTHENTICATED %}
+                        <a class="dropdown-item change-status" href="javascript:void(0)" data-status="1">
+                            <i class="fa fa-circle fa-fw mr-2 online"></i>{{ _('Online') }}
+                        </a>
+                        <a class="dropdown-item change-status" href="javascript:void(0)" data-status="2">
+                            <i class="fa fa-circle fa-fw mr-2 offline"></i>{{ _('Offline') }}
+                        </a>
+                        <a class="dropdown-item change-status" href="javascript:void(0)" data-status="3">
+                            <i class="fa fa-circle fa-fw mr-2 busy"></i>{{ _('Busy') }}
+                        </a>
+                        <a class="dropdown-item change-status" href="javascript:void(0)" data-status="4">
+                            <i class="fa fa-circle fa-fw mr-2 away"></i>{{ _('Away') }}
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        {% if SETTINGS.sso_enabled == false or SETTINGS.sso_allow_profile_edit == true %}
+                        <a class="dropdown-item" href="javascript:void(0)" data-toggle="modal" data-target="#modalProfile">
+                            <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                            {{ _('Profile') }}
+                        </a>
+                        {% endif %}
+                        {% if USER.user_type == 1 %}
+                        <a class="dropdown-item" target="_blank" href="{{ url('dashboard') }}">
+                            <i class="fas fa-user-shield fa-sm fa-fw mr-2 text-gray-400"></i> {{ _('Admin Dashboard') }}
+                        </a>
+                        {% endif %}
+                        {% if USER.user_type == 2 %}
+                        <a class="dropdown-item" href="javascript:void(0)" data-toggle="modal" data-target="#chatroomList">
+                            <i class="fas fa-comments fa-sm fa-fw mr-2 text-gray-400"></i>
+                            {{ _('My Rooms') }}
+                        </a>
+    
+                        {% endif %}
+    
+                        {% if (SETTINGS.enable_members_room is defined and SETTINGS.enable_members_room) and USER.user_type == 2 %}
+                            <a class="dropdown-item new-chatroom" href="javascript:void(0)">
+                                <i class="fas fa-plus fa-sm fa-fw mr-2 text-gray-400"></i>{{ _('New Chat Room') }}
+                            </a>
+                        {% elseif (SETTINGS.enable_moderators_room is defined and SETTINGS.enable_moderators_room) and USER.user_type == 4 %}
+                            <a class="dropdown-item new-chatroom" href="javascript:void(0)">
+                                <i class="fas fa-plus fa-sm fa-fw mr-2 text-gray-400"></i>{{ _('New Chat Room') }}
+                            </a>
+                        {% elseif USER.user_type == 1 %}
+                            <a class="dropdown-item new-chatroom" href="javascript:void(0)">
+                                <i class="fas fa-plus fa-sm fa-fw mr-2 text-gray-400"></i>{{ _('New Chat Room') }}
+                            </a>
+                        {% endif %}
+    
+                        {% if USER.user_type == 1 or USER.user_type == 4 %}
+                        <a class="dropdown-item" href="javascript:void(0)" data-toggle="modal" data-target="#chatroomList">
+                            <i class="fas fa-comments fa-sm fa-fw mr-2 text-gray-400"></i>
+                            {{ _('Manage Rooms') }}
+                        </a>
+                        {% endif %}
+    
+                        <div class="dropdown-divider"></div>
+    
+                        {% endif %}
+                        
+                        {% if SETTINGS.enable_about %}
+                        <a target="_blank" class="dropdown-item" href="{{ url('about') }}">{{ _('About Us') }}</a>
+                        {% endif %}
+    
+                        {% if SETTINGS.enable_contact %}
+                        <a target="_blank" class="dropdown-item" href="{{ url('contact') }}">{{ _('Contact Us') }}</a>
+                        {% endif %}
+    
+                        {% if SETTINGS.enable_privacy %}
+                        <a target="_blank" class="dropdown-item" href="{{ url('privacy') }}">{{ _('Privacy Policy') }}</a>
+                        {% endif %}
+    
+                        {% if SETTINGS.enable_terms %}
+                        <a target="_blank" class="dropdown-item" href="{{ url('terms') }}">{{ _("Terms & Conditions") }}</a>
+                        {% endif %}
+    
+                        <div class="dropdown-divider"></div>
+                        {% if IS_AUTHENTICATED %}
+                        <a class="dropdown-item" href="javascript:void(0)" data-toggle="modal" data-target="#logoutModal">
+                            <i class="fas fa-power-off fa-sm fa-fw mr-2 text-gray-400"></i>
+                            {{ _('Logout') }}
+                        </a>
+                        {% else %}
+                        <a class="dropdown-item" {% if SETTINGS.sso_enabled and SETTINGS.sso_login_url %} href="{{ SETTINGS.sso_login_url }}" target="_parent" {% else %} href="{{ url('login') }}" {% endif %} >
+                            <i class="fas fa-power-off fa-sm fa-fw mr-2 text-gray-400"></i>
+                            {{ _('Sign In') }}
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="dropup theme-selector ml-2">
+                    <button class="btn btn-sm btn-thm" type="button" id="themeSelector" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-sun"></i> <i class="far fa-moon"></i>
+                    </button>
+                    <div class="dropdown-menu scrollable-menu" aria-labelledby="themeSelector">
+                        {% if SETTINGS.theme == 'custom' and THEME != 'custom' %}
+                        <a class="dropdown-item" href="{{ url('settheme', {'reqtheme':'custom'}) }}">
+                            <i class="fas fa-adjust fa-sm fa-fw mr-2 text-gray-400"></i>
+                            {{ _('Switch to Default Theme') }}
+                        </a>
+                    {% endif %}
+                    {% if THEME != 'dark' %}
+                        <a class="dropdown-item" href="{{ url('settheme',  {'reqtheme':'dark'}) }}">
+                            <i class="fas fa-moon fa-sm fa-fw mr-2 text-gray-400"></i>
+                            {{ _('Switch to Dark Theme') }}
+                        </a>
+                    {% endif %}
+                    {% if THEME != 'light' %}    
+                    <a class="dropdown-item" href="{{ url('settheme',  {'reqtheme':'light'}) }}">
+                        <i class="fas fa-sun fa-sm fa-fw mr-2 text-gray-400"></i>
+                        {{ _('Switch to Light Theme') }}
+                    </a>
+                    {% endif %}
+                    {% if THEME != 'default' %}    
+                    <a class="dropdown-item" href="{{ url('settheme',  {'reqtheme':'default'}) }}">
+                        <i class="fas fa-cloud-moon fa-sm fa-fw mr-2 text-gray-400"></i>
+                        {{ _('Switch to Hybrid Theme') }}
+                    </a>
+                    {% endif %}
+                    </div>
+                </div>
+                {% if SETTINGS.enable_multiple_languages %}
+                <div class="dropup lang-selector ml-3">
+                    <button class="btn btn-sm btn-lang dropdown-toggle" type="button" id="langSelector" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span id="selected-lang-toggle"> <span class="flag-icon flag-icon-{{ LANG['country'] }}"></span>  </span>
+                    </button>
+                    <div class="dropdown-menu scrollable-menu" aria-labelledby="langSelector">
+                        {% for select_lang in lang_list %}
+                            <a class="dropdown-item {% if select_lang.code == LANG %}selected-lang{%endif%}" href="{{ url('setlang', {'reqlang':select_lang.code}) }}">
+                                <span class="flag-icon flag-icon-{{select_lang.country}}"></span> {{select_lang.name}}
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+            </div>
+        </div>
+        
+    </div>
+    {% endif %}
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column p-0">
+        <!-- Main Content -->
+        <div id="content">
+            <!-- Begin Page Content -->
+            <div class="container-fluid p-0 ">
+                <!-- Content Row -->
+                <div class="row  m-0">
+                    <div class="col-xl-12 col-md-12 pl-0 pr-0 chat-messages-col ">
+
+                        <div class="video-container" style="display:none;">
+                            <div class="call-msg"></div>
+                            <div id="media-div">
+                                <div class="local-video" id="local-player">
+                                    <div class="video-caller-name">{{_("You")}}</div>
+                                </div>
+                            </div>
+                            <div class="call-controllers">
+                                <button class="btn btn-sm btn-danger call-controll hangup"> <i class="fas fa-phone-slash"></i></button>
+                                <button class="btn btn-sm btn-danger call-controll call-toggle-cam ml-2"> <i class="fas fa-video-slash"></i></button>
+                                <button class="btn btn-sm btn-danger call-controll call-toggle-mic ml-2"> <i class="fas fa-microphone-slash"></i></button>
+                                <button class="btn btn-sm btn-success call-controll call-toggle-height ml-2"> <i class="fas fa-arrows-alt-v"></i></button>
+                                <button class="btn btn-sm btn-success call-controll call-toggle-fc ml-2"> <i class="fas fa-expand"></i></button>
+                            </div>
+                        </div>
+                        
+                        <input type="hidden" id="active_user" value="{{activechat}}" />
+                        <input type="hidden" id="active_group" value="{{chat_group.id}}" />
+                        <input type="hidden" id="active_room" value="{{chat_room.id}}" />
+                        <input type="hidden" id="active_room_created_by" value="{{chat_room.created_by}}" />
+                        <input type="hidden" id="chat_room_user_count" value="{{chat_room.user_count}}">
+                        <input type="hidden" id="dm_user_count" value="{{dm_user_count}}">
+                        <input type="hidden" id="last_chat_id" value="{{last_chat_id}}" />
+                        <input type="hidden" id="chat_meta_id" value="" />
+                        <input type="hidden" id="is_mod" value="" />
+                        <input type="hidden" id="last_updated_chat_time" value="{{last_updated_chat_time}}" />
+                        <input type="hidden" id="joined_room" value="{{joined_room}}" />
+                        <input type="hidden" id="disable_group_chats" value="{{disable_group_chats}}" />
+                        <input type="hidden" id="disable_private_chats" value="{{disable_private_chats}}" />
+                        <input type="hidden" id="allow_guest_view" value="{{allow_guest_view}}" />
+                        <input type="hidden" id="hide_chat_list" value="{{hide_chat_list}}" />
+                        <input type="hidden" id="chat_room_url" value="{{  url('chat-room', {'chatroomslug':chat_room.slug}) }}" />
+                        <input type="hidden" id="call_id" value="" />
+
+                        <nav class="navbar navbar-expand navbar-light topbar static-top lite-shadow chat-nav {% if hide_chat_list %}topbar-dark{% endif %}">
+                        {% if hide_chat_list == true %}
+                           
+                            {% include "chat_logo.html" %}
+                           
+                        {% endif %}
+                            <!-- Right Sidebar Toggle -->
+                            {% if hide_chat_list == false %}
+                            <button class="chat-list-toggle btn btn-success btn-circle btn-sm">
+                                <div class='all-room-unread-2'>
+                                    <span class="badge badge-danger badge-all-unread all-unread-2"></span>
+                                </div>
+                                <i class="fas fa-arrows-alt-h"></i>
+                            </button>
+                            {% endif %}
+                            <div class="chat-header">
+                                <h1 class="chat-title"></h1>
+                                <small class="chat-slug"></small>
+                            </div>
+                            
+                            <div class="chat-title-dd dropdown">
+                                <a class="nav-link p-0" href="javascript:void(0)" id="infoDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <span class="dropdown-togglex dropdown-toggle-split ">
+                                        <i class="fas fa-user-cog"></i>
+                                    </span>
+                                </a>
+                                <!-- Dropdown - Chat Information -->
+                                <div class="dropdown-menu dropdown-menu-right lite-shadow" aria-labelledby="infoDropdown">  
+                                    <div class="active-group-action">
+                                        <a href="javascript:void(0)" title="{{ _('Mute') }}" class="dropdown-item active-group-mute " data-is-muted="0">
+                                            <span class="icon">
+                                                <i class="fas fa-bell-slash"></i>
+                                            </span>
+                                            <span class="action-title">
+                                                {{ _('Mute') }}
+                                            </span>
+                                        </a>
+                    
+                                        <a href="javascript:void(0)" class="dropdown-item init-report" data-report-type="3" data-report-header="" data-report-for="" >
+                                            <span class="icon">
+                                                <i class="fas fa-flag"></i>
+                                            </span>
+                                            {{ _('Report') }}
+                                        </a>
+                    
+                                        <a href="javascript:void(0)" class="dropdown-item clear-chats" >
+                                            <span class="icon">
+                                                <i class="fas fa-comment-slash"></i>
+                                            </span>
+                                            {{ _('Clear Chats') }}
+                                        </a>
+                    
+                                        <a href="javascript:void(0)" class="dropdown-item leave-room" data-room="{{chat_room.id}}" >
+                                            <span class="icon">
+                                                <i class="fas fa-sign-out-alt"></i>
+                                            </span>
+                                            {{ _('Leave Room') }}
+                                        </a>
+
+                                        {% if (SETTINGS.enable_members_room is defined and SETTINGS.enable_members_room) and USER.user_type == 2 %}
+                                        <a class="dropdown-item new-chatroom" href="javascript:void(0)">
+                                            <span class="icon">
+                                                <i class="fas fa-plus"></i>
+                                            </span>
+                                            {{ _('New Chat Room') }}
+                                        </a>
+                                        {% elseif (SETTINGS.enable_moderators_room is defined and SETTINGS.enable_moderators_room) and USER.user_type == 4 %}
+                                            <a class="dropdown-item new-chatroom" href="javascript:void(0)">
+                                                <span class="icon">
+                                                    <i class="fas fa-plus"></i>
+                                                </span>
+                                                {{ _('New Chat Room') }}
+                                            </a>
+                                        {% elseif USER.user_type == 1 %}
+                                            <a class="dropdown-item new-chatroom" href="javascript:void(0)">
+                                                <span class="icon">
+                                                    <i class="fas fa-plus"></i>
+                                                </span>
+                                                {{ _('New Chat Room') }}
+                                            </a>
+                                        {% endif %}
+                                        
+                                        {% if ( USER.user_type == 1 or USER.user_type == 4  or chat_room.created_by == USER.id or is_mod) and chat_room   %}
+                                            <div class="dropdown-divider"></div>
+                                            <a href="javascript:void(0)" class="dropdown-item view-chatroom"  data-room="{{chat_room.id}}" >
+                                                <span class="icon">
+                                                    <i class="fas fa-users-cog"></i>
+                                                </span>
+                                                {{ _('Manage') }}
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                    <div class="active-user-action">
+                                        <a href="javascript:void(0)" title="{{_('Make Favorite')}}" class="dropdown-item active-user-favourite" data-is-favourite="0">
+                                            <span class="icon">
+                                                <i class="far fa-heart"></i>
+                                            </span>
+                                            <span class="action-title">
+                                                {{_('Make Favorite')}}
+                                            </span>
+                                        </a>
+                                        <a href="javascript:void(0)" title="{{_('Block')}}" class="dropdown-item active-user-block" data-is-blocked="0">
+                                            <span class="icon">
+                                                <i class="far fa-circle"></i>
+                                            </span>
+                                            <span class="action-title">
+                                                {{_('Block')}}
+                                            </span>
+                                        </a>
+                                        <a href="javascript:void(0)" title="{{_('Mute')}}" class="dropdown-item active-user-mute" data-is-muted="0">
+                                            <span class="icon">
+                                                <i class="fas fa-bell-slash"></i>
+                                            </span>
+                                            <span class="action-title">
+                                                {{ _('Mute') }}
+                                            </span>
+                                        </a>
+                                        <a href="javascript:void(0)" title="{{ _('Report') }}" class="dropdown-item init-report" data-report-type="2" data-report-header="" data-report-for="" >
+                                            <span class="icon">
+                                                <i class="fas fa-flag"></i>
+                                            </span>
+                                            {{ _('Report') }}
+                                        </a>
+                                        <a href="javascript:void(0)" title="{{ _('Clear Chats') }}" class="dropdown-item clear-chats" >
+                                            <span class="icon">
+                                                <i class="fas fa-comment-slash"></i>
+                                            </span>
+                                            {{ _('Clear Chats') }}
+                                        </a>
+                                    </div>
+                                    
+                                    <div class="dropdown-divider"></div>
+
+                                    <a href="javascript:void(0)" class="dropdown-item selected-chat-toggle ">
+                                        <span class="icon">
+                                            <i class="fas fa-info-circle"></i>
+                                        </span>
+                                        {{ _('Toggle Chat Info') }}
+                                    </a> 
+                
+                                </div>
+                            </div>
+
+                            <div class="ml-auto d-flex">
+                                {% if SETTINGS.video_calling %}
+                                <button id="launch-call" class="launch-call btn btn-success btn-sm mr-3 hidden">
+                                    <i class="fas fa-video"></i> <span class="launch-call-txt">{{_('Call')}}</span>
+                                </button>
+                                {% endif %}
+
+                                <button class="selected-chat-toggle btn btn-success btn-circle btn-sm">
+                                    <i class="fas fa-arrows-alt-h"></i>
+                                </button>
+                            </div>
+
+                        </nav>
+                        <div class="card-body message-card-body messages" >
+                            {% if SETTINGS.chat_notice_message %}
+                            <div class="chat-notice general-notice alert alert-{{SETTINGS.chat_notice_class}} alert-dismissible fade show" {% if chat_room.room_notice_message %}style="display:none"{% endif %} role="alert">
+                                {{SETTINGS.chat_notice_message|htmlspecialchars_decode|raw}}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            {% endif %}
+                            {% if chat_room.room_notice_message %}
+                            <div class="chat-notice room-notice alert alert-{{chat_room.room_notice_class}} alert-dismissible fade show" {% if activechat %}style="display:none"{% endif %} role="alert">
+                                {{chat_room.room_notice_message|htmlspecialchars_decode|raw}}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            {% endif %}
+                            {% if view_as_user %}
+                                <div class="chat-notice alert alert-warning fade show" role="alert">
+                                    {{_('Viewing As')}} {{view_as_user.first_name}} {{view_as_user.last_name}}
+                                </div>
+                            {% endif %}
+         
+                            <div class="chat-scroll" {% if disable_group_chats %}style='display:none;'{% endif %}>
+                                <div class="chats">
+                                </div>
+                            </div>
+          
+                            <div class="type-message animate__animated animate__flipInX" {% if disable_group_chats %}style='display:none;'{% endif %} {% if not IS_AUTHENTICATED or not joined_room %}style="display:none"{% endif %}>
+                                <small class="is-typing animate__animated animate__fadeInUp"><span>{{ _('typing...') }}</span> <i class="ml-1 fa fa-pencil-alt fa fa-pencil-alt animate__animated animate__infinite animate__slower15 animate__shakeX"></i></small>
+                                <div class="gse-row animate__animated animate__fadeInUp"></div>
+                                <div class="reply-msg-row" data-reply-id="">
+                                    <div class="replied-to">
+                                        <span class="replied-border"></span>
+                                        <div class="replied-content">
+                                            <div class="replied-content-data">
+                                                <div class="replied-user" >{{_("You")}}</div>
+                                                <div class="replied-html">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="replied-preview">
+
+                                        </div>
+                                    </div>
+                                    <button type="button" class="close close-reply-msg"><i class="fas fa-times"></i></button>
+                                </div>
+                                <div class="mobile-act-row"></div>
+                                <div class="input-message-write">
+                                    <div class="p-0 message-input-col justify-content-centerx align-self-centerx">
+
+                                        <div class="act-row act-row-center">
+                                            <div class="act-more" {% if SETTINGS.enable_files or SETTINGS.enable_audioclip %}style='display:'{% else %}style='display:none'{% endif %}>
+                                                <div class="act-more-btn  btn-circle btn-sm">
+                                                    <i class="fas fa-plus"></i>
+                                                </div>
+                                            </div>
+                                            <div class="act-section act-hidden" style="width: 0px;">
+                                                {% if SETTINGS.enable_audioclip %}
+                                                <div class="act-icon act-btn">
+                                                    <div class="message-audio btn-msg" role="button" data-toggle="tooltip" data-placement="top" title="{{ _('Send Audio') }}" >
+                                                        <i class="fa mic-icon fa-microphone-alt"></i>
+                                                    </div>
+                                                </div>
+                                                {% endif %}
+                                                {% if SETTINGS.enable_codes %}
+                                                <div class="act-icon act-btn" role="button" >
+                                                    <div class="message-code btn-msg" role="button">
+                                                        <img class="btn-tooltip" data-toggle="tooltip" data-placement="top" title="{{ _('Send Code') }}" src="{{STATIC_URL}}/img/codes_icon.png"  />
+                                                    </div>
+                                                </div>
+                                                {% endif %}
+                                                {% if SETTINGS.enable_files %}
+                                                <div class="act-icon act-btn">
+                                                    <div class="message-files btn-msg" role="button" data-toggle="tooltip" data-placement="top" title="{{ _('Send Files') }}" >
+                                                        <img src="{{STATIC_URL}}/img/files_icon.png"  />
+                                                    </div>
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="act-section">
+                                                {% if SETTINGS.enable_gif %}
+                                                <div class="act-icon act-btn" role="button" >
+                                                    <div class="message-gif btn-msg" role="button">
+                                                        <img class="btn-tooltip" data-toggle="tooltip" data-placement="top" title="{{ _('Send Gifs') }}" src="{{STATIC_URL}}/img/gif_icon.png"  />
+                                                    </div>
+                                                </div>
+                                                {% endif %}
+                                                {% if SETTINGS.enable_stickers %}
+                                                <div class="act-icon act-btn" role="button" >
+                                                    <div class="message-sticker btn btn-msg" role="button">
+                                                        <img class="btn-tooltip" data-toggle="tooltip" data-placement="top" title="{{ _('Send Stickers') }}" src="{{STATIC_URL}}/img/sticker_icon.png"  />
+                                                    </div>
+                                                </div>
+                                                {% endif %}
+                                                {% if SETTINGS.enable_videos %}
+                                                <div class="act-icon act-btn" role="button" >
+                                                    <div class="message-videos btn-msg" role="button" data-toggle="tooltip" data-placement="top" title="{{ _('Send Videos') }}" >
+                                                        <img src="{{STATIC_URL}}/img/video_icon.png"  />
+                                                    </div>
+                                                </div>
+                                                {% endif %}
+                                                {% if SETTINGS.enable_images %}
+                                                <div class="act-icon act-btn" role="button" >
+                                                    <div class="message-images btn-msg" role="button" data-toggle="tooltip" data-placement="top" title="{{ _('Send Images') }}" >
+                                                        <img src="{{STATIC_URL}}/img/image_icon.png"  />
+                                                    </div>
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="chat-box"  >
+                                                    <textarea class="form-control" name="message_content" rows="1"  id="message_content" placeholder="{{ _('Type a message...') }}"></textarea>
+                                                    <button type="button" class="btn btn-send">
+                                                        <i class="fas fa-paper-plane"></i>
+                                                    </button>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="type-blocked-overlay" style="display:none;">
+                                    {{ _('Blocked User') }}
+                                </div>
+                                <div class="forward-selection animate__animated animate__fadeInUp animate__fast hidden">
+                                    <button class="forward-selection-close btn btn-circle">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                    <div class="forward-selection-name">
+                                    </div>
+                                    <div class="forward-selection-button-container animate__animated animate__zoomIn">
+                                        <button class="forward-selected btn btn-circle">
+                                            <i class="fas fa-share"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            {% if IS_AUTHENTICATED and joined_room and disable_group_chats %}
+                                <div class="non-chat-select">
+                                    <img src="{{STATIC_URL}}/img/login.svg"  />
+                                    <p>{{ _('You must select user before you can send messages') }} </p>
+                                </div>
+                            {% endif %}
+                            {% if not IS_AUTHENTICATED %}
+                                <div class="non-login-message">
+                                    <img src="{{STATIC_URL}}/img/login.svg"  />
+                                    <p>{{ _('You must') }} {% if SETTINGS.sso_enabled and SETTINGS.sso_login_url %} <a target='_parent' href="{{ SETTINGS.sso_login_url }}"> {% else %} <a class="show-auth-model" href="javascript:void(0)"> {% endif %} {{ _('Sign in or Register') }}</a> {{ _('before you can send messages in this room') }} </p>
+                                </div>
+                                 
+                            {% endif %}
+                            {% if IS_AUTHENTICATED and not joined_room %}
+                                <div class="non-join-message">
+                                    <img src="{{STATIC_URL}}/img/login.svg"  />
+                                    <form id="join_form" method="POST">
+                                        {{ csrf_token()|raw }}
+                                        <p>{{ _('You must') }} <a onclick="document.getElementById('join_form').submit();" href="javascript:void(0)">{{ _('join this room') }}</a> {{ _('before you can send messages') }} </p>
+                                        {% if room_auto_join %}
+                                            <script>document.getElementById('join_form').submit();</script>
+                                        {% endif %}
+                                    </form>
+                                </div>
+                            {% endif %}
+                            
+                            <div class="file-uploader animate__animated animate__fadeIn">
+                                <input type="text" placeholder="Add a caption..." class="form-control uppy-caption" name="caption" autocomplete="off" />
+                                <div class="file-uploader-close"><i class="fas fa-times"></i></div>
+                                <div class="uppy">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.container-fluid -->
+        </div>
+        <!-- End of Main Content -->
+    </div>
+    <!-- End of Content Wrapper -->
+    <div class="flex-column col-3 distant  p-0 selected-chat-col">
+        <nav class="navbar navbar-expand navbar-light topbar static-top lite-shadow chat-nav {% if hide_chat_list %}topbar-dark{% endif %}">
+            <div class="ml-auto d-flex">
+                <button data-toggle="tooltip" data-placement="bottom" class="btn btn-sm btn-notifications btn-tooltip " type="button" title="{{ _('Notifications') }}">
+                    <i class="fas fa-bell"></i>
+                    <span class="badge badge-danger badge-counter noti-count" style="display:none"></span>
+                </button>
+                <button class=" selected-chat-toggle btn btn-info btn-circle btn-sm">
+                    <i class="fas fa-ellipsis-v"></i>
+                </button>
+            </div>
+        </nav>
+        <div class="panel-content-right" {% if disable_group_chats %}style='display:none;'{% endif %}>
+            <div class="selected-chat height-fix active-group-info">
+                <div class="selected-chat-info">
+                    <img class="img-responsive  active-group-cover" src="{{STATIC_URL}}/img/group.png"  alt="">
+                    <p class="selected-chat-name active-group-name"></p>
+                </div>
+                <div class="selected-chat-actions">
+                    <div class="dropdown d-inline-block">
+                        <button class="btn chat-info-action" title="{{ _('Share this room') }}" type="button" id="roomShare" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="icon">
+                                <i class="fas fa-share-alt"></i>
+                            </span>
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="roomShare">
+                            <a class="dropdown-item" href="javascript:void(0)" onclick='prompt("{{ _('Link to this room') }}:", "{{  url('chat-room', {'chatroomslug':chat_room.slug}) }}")'>
+                                <i class="fas fa-link"></i> {{ _('Get Link') }}
+                            </a>
+                            <a class="dropdown-item" target="_blank" href="https://facebook.com/sharer/sharer.php?u={{  url('chat-room', {'chatroomslug':chat_room.slug})|url_encode }}">
+                                <i class="fab fa-facebook"></i> {{ _('Share on Facebook') }}
+                            </a>
+                            <a class="dropdown-item" target="_blank" href="https://twitter.com/intent/tweet/?url={{  url('chat-room', {'chatroomslug':chat_room.slug})|url_encode }}&text={{chat_room.name}} - {{ SETTINGS.site_name }}">
+                                <i class="fab fa-twitter-square"></i> {{ _('Share on Twitter') }}
+                            </a>
+                            <a class="dropdown-item" target="_blank" href="mailto:?subject=Invitation: {{chat_room.name}} - {{ SETTINGS.site_name }}&body=You are invited to join {{chat_room.name}} on {{ SETTINGS.site_name }}. %0D%0AVisit: {{  url('chat-room', {'chatroomslug':chat_room.slug})|url_encode }}">
+                                <i class="fas fa-envelope-open-text"></i> {{ _('Email Invitation') }}
+                            </a>
+                            <a class="dropdown-item" target="_blank" href="whatsapp://send?text=You are invited to join {{chat_room.name}} on {{ SETTINGS.site_name }}. %0D%0AVisit: {{  url('chat-room', {'chatroomslug':chat_room.slug})|url_encode }}">
+                                <i class="fab fa-whatsapp"></i> {{ _('Invite via WhatsApp') }}
+                            </a>
+                            <a class="dropdown-item" target="_blank" href="https://telegram.me/share/url?text=You are invited to join {{chat_room.name}} on {{ SETTINGS.site_name }}&url={{  url('chat-room', {'chatroomslug':chat_room.slug})|url_encode }}">
+                                <i class="fab fa-telegram"></i> {{ _('Invite via Telegram') }}
+                            </a>
+
+                        </div>
+                    </div>
+
+                    <a href="javascript:void(0)" data-toggle="tooltip" data-placement="top" title="{{ _('Search') }}"  class="btn chat-info-action btn-chat-search ">
+                        <span class="icon">
+                            <i class="fa fa-search"></i>
+                        </span>
+                    </a>
+                    
+                    <div class="btn-group" role="group">
+                        <button id="group-options-dropdown" type="button" class="btn btn-primary btn-xs dropdown-toggle" id="optionDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            {{ _('Options') }}
+                        </button>
+                        <!-- Dropdown - Chat Information -->
+                        <div class="dropdown-menu lite-shadow" aria-labelledby="group-options-dropdown">  
+                            <div class="active-group-action">
+                            
+                                <a href="javascript:void(0)" title="{{ _('Mute') }}" class="dropdown-item active-group-mute " data-is-muted="0">
+                                    <span class="icon">
+                                        <i class="fas fa-bell-slash"></i>
+                                    </span>
+                                    <span class="action-title">
+                                        {{ _('Mute') }}
+                                    </span>
+                                </a>
+
+                                <a href="javascript:void(0)" title="{{ _('Embed Code') }}" class="dropdown-item roomEmbed " >
+                                    <span class="icon">
+                                        <i class="fas fa-code"></i>
+                                    </span>
+                                    <span class="action-title">
+                                        {{ _('Embed Code') }}
+                                    </span>
+                                </a>
+            
+                                <a href="javascript:void(0)" class="dropdown-item init-report" data-report-type="3" data-report-header="" data-report-for="" >
+                                    <span class="icon">
+                                        <i class="fas fa-flag"></i>
+                                    </span>
+                                    {{ _('Report') }}
+                                </a>
+            
+                                <a href="javascript:void(0)" class="dropdown-item clear-chats" >
+                                    <span class="icon">
+                                        <i class="fas fa-comment-slash"></i>
+                                    </span>
+                                    {{ _('Clear Chats') }}
+                                </a>
+            
+                                <a href="javascript:void(0)" class="dropdown-item leave-room" data-room="{{chat_room.id}}" >
+                                    <span class="icon">
+                                        <i class="fas fa-sign-out-alt"></i>
+                                    </span>
+                                    {{ _('Leave Room') }}
+                                </a>
+
+                                {% if (SETTINGS.enable_members_room is defined and SETTINGS.enable_members_room) and USER.user_type == 2 %}
+                                <a class="dropdown-item new-chatroom" href="javascript:void(0)">
+                                    <span class="icon">
+                                        <i class="fas fa-plus"></i>
+                                    </span>
+                                    {{ _('New Chat Room') }}
+                                </a>
+                                {% elseif (SETTINGS.enable_moderators_room is defined and SETTINGS.enable_moderators_room) and USER.user_type == 4 %}
+                                    <a class="dropdown-item new-chatroom" href="javascript:void(0)">
+                                        <span class="icon">
+                                            <i class="fas fa-plus"></i>
+                                        </span>
+                                        {{ _('New Chat Room') }}
+                                    </a>
+                                {% elseif USER.user_type == 1 %}
+                                    <a class="dropdown-item new-chatroom" href="javascript:void(0)">
+                                        <span class="icon">
+                                            <i class="fas fa-plus"></i>
+                                        </span>
+                                        {{ _('New Chat Room') }}
+                                    </a>
+                                {% endif %}
+                                
+                                {% if ( USER.user_type == 1 or USER.user_type == 4  or chat_room.created_by == USER.id or is_mod) and chat_room   %}
+                                    <div class="dropdown-divider"></div>
+                                    <a href="javascript:void(0)" class="dropdown-item view-chatroom"  data-room="{{chat_room.id}}" >
+                                        <span class="icon">
+                                            <i class="fas fa-users-cog"></i>
+                                        </span>
+                                        {{ _('Manage') }}
+                                    </a>
+                                {% endif %}
+
+                            </div>
+        
+                        </div>
+                    </div>
+
+                </div>
+                
+                {% if chat_room.ad_chat_right_bar %}
+                <div class="advert ad_chat_right_bar responsive">
+                    {{chat_room.ad_chat_right_bar|htmlspecialchars_decode|raw}}
+                </div>
+                {% elseif SETTINGS.ad_chat_right_bar %}
+                <div class="advert ad_chat_right_bar {{SETTINGS.ad_chat_right_bar_size}}">
+                    {{SETTINGS.ad_chat_right_bar|htmlspecialchars_decode|raw}}
+                </div>
+                {% endif %}
+                {% if hide_chat_list == false %}
+                <div class="card-header chat-data-header d-flex flex-row align-items-center justify-content-between" data-toggle="collapse" href="#group-users-tab" aria-expanded="false" aria-controls="multiCollapseExample1">
+                    <h6 class="m-0">{{ _('Recent Users') }}</h6>
+                    <div class="dropdown no-arrow">
+                        <i class="fa fa-angle-down"></i>
+                    </div>
+                </div>
+                <div class="selected-chat-profile active-group-users collapse show multi-collapse" id="group-users-tab" >
+                </div>
+                {% endif %}
+
+                <ul class="nav nav-pills nav-justified nav-recent mt-3">
+                    <li class="nav-item"><a class="nav-link active" data-toggle="pill" href="#recent-media-group">{{_("Media")}}</a></li>
+                    <li class="nav-item"><a class="nav-link" data-toggle="pill" href="#recent-files-group">{{_("Files")}}</a></li>
+                    <li class="nav-item"><a class="nav-link" data-toggle="pill" href="#recent-links-group">{{_("Links")}}</a></li>
+                </ul>
+
+                <div class="tab-content recent-items">
+                    <div id="recent-media-group" class="tab-pane in active">
+                        <div class="row m-0 mt-3 "></div>
+                    </div>
+                    <div id="recent-files-group" class="tab-pane fade">
+                        <div class="row m-0 mt-3"></div>
+                    </div>
+                    <div id="recent-links-group" class="tab-pane fade">
+                        <div class="row m-0 mt-3"></div>
+                    </div>
+                </div>
+
+                <div class="online-list-actions">
+                    <button class="btn btn-secondary btn-icon-split btn-xs max-recent" >
+                        <span class="icon text-white-50">
+                            <i class="fas fa-expand-arrows-alt"></i>
+                        </span>
+                        <span class="text">{{_("View More")}}</span>
+                    </button>
+                </div>
+
+            </div>
+            <div class="selected-chat height-fix active-user-info " style="display:none">
+                <input type="hidden" id="shown-user" name="shown-user" >
+                <div class="close-selected-user">
+                    <i class="fa fa-times"></i>
+                </div>
+                <div class="selected-chat-info">
+                    <img class="img-responsive rounded-circle active-user-avatar lazy" src="{{STATIC_URL}}/img/loading.gif" width="300px" data-src="{{STATIC_URL}}/img/user.png"  alt="">
+                    <p class="selected-chat-name active-user-title"></p>
+                    <p class="speech-bubble active-user-about"></p>
+                    <div class="active-user-badges">
+                        {% for badge in system_badges %}
+                        <div class="user-badge" id="badge-{{badge.id}}" data-toggle="tooltip" data-placement="top" title="{{badge.name}}" >
+                            <img src="{% if badge.icon %}{{MEDIA_URL}}/settings/{{ badge.icon }}{% endif %}" alt="{{badge.name}}" class="badge-icon">
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="selected-chat-actions">
+                    <a href="javascript:void(0)" data-toggle="tooltip" data-placement="top" title="{{ _('Search') }}"  class="btn chat-info-action btn-chat-search ">
+                        <span class="icon">
+                            <i class="fa fa-search"></i>
+                        </span>
+                    </a>
+                    <div class="btn-group" role="group">
+                        <button id="user-options-dropdown" type="button" class="btn btn-primary btn-xs dropdown-toggle" id="optionDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Options
+                        </button>
+                        <!-- Dropdown - Chat Information -->
+                        <div class="dropdown-menu lite-shadow" aria-labelledby="user-options-dropdown">  
+                            <div class="active-user-action">
+                                <a href="javascript:void(0)" title="{{_('Make Favorite')}}" class="dropdown-item active-user-favourite" data-is-favourite="0">
+                                    <span class="icon">
+                                        <i class="far fa-heart"></i>
+                                    </span>
+                                    <span class="action-title">
+                                        {{_('Make Favorite')}}
+                                    </span>
+                                </a>
+                                <a href="javascript:void(0)" title="{{_('Block')}}" class="dropdown-item active-user-block" data-is-blocked="0">
+                                    <span class="icon">
+                                        <i class="far fa-circle"></i>
+                                    </span>
+                                    <span class="action-title">
+                                        {{_('Block')}}
+                                    </span>
+                                </a>
+                                <a href="javascript:void(0)" title="{{_('Mute')}}" class="dropdown-item active-user-mute" data-is-muted="0">
+                                    <span class="icon">
+                                        <i class="fas fa-bell-slash"></i>
+                                    </span>
+                                    <span class="action-title">
+                                        {{ _('Mute') }}
+                                    </span>
+                                </a>
+                                <a href="javascript:void(0)" title="{{ _('Report') }}" class="dropdown-item init-report" data-report-type="2" data-report-header="" data-report-for="" >
+                                    <span class="icon">
+                                        <i class="fas fa-flag"></i>
+                                    </span>
+                                    {{ _('Report') }}
+                                </a>
+                                <a href="javascript:void(0)" title="{{ _('Clear Chats') }}" class="dropdown-item clear-chats" >
+                                    <span class="icon">
+                                        <i class="fas fa-comment-slash"></i>
+                                    </span>
+                                    {{ _('Clear Chats') }}
+                                </a>
+                            </div>
+        
+                        </div>
+                    </div>
+                    
+                </div>
+                {% if chat_room.ad_chat_right_bar %}
+                <div class="advert ad_chat_right_bar responsive">
+                    {{chat_room.ad_chat_right_bar|htmlspecialchars_decode|raw}}
+                </div>
+                {% elseif SETTINGS.ad_chat_right_bar %}
+                <div class="advert ad_chat_right_bar {{SETTINGS.ad_chat_right_bar_size}}">
+                    {{SETTINGS.ad_chat_right_bar|htmlspecialchars_decode|raw}}
+                </div>
+                {% endif %}
+                <div class="text-center mt-1">
+                    <a href="javascript:void(0)" class="btn btn-success btn-icon-split btn-xs start-chat" >
+                        <span class="icon text-white-50">
+                            <i class="fas fa-comments"></i>
+                        </span>
+                        <span class="text">{{_("Start Chat")}}</span>
+                    </a>
+                </div>
+               
+                <div class="card-header chat-data-header d-flex flex-row align-items-center justify-content-between" data-toggle="collapse" href="#profile-tab" aria-expanded="false" aria-controls="multiCollapseExample1">
+                    <h6 class="m-0">{{ _('Profile') }}</h6>
+                    <div class="dropdown no-arrow">
+                        <i class="fa fa-angle-down"></i>
+                    </div>
+                </div>
+                <div class="selected-chat-profile collapse show multi-collapse" id="profile-tab">
+                    <div class="row">
+                        <div class="col-4">
+                            {% if SETTINGS.display_name_format == 'username' %}
+                                <label>{{ _('Username') }}</label>
+                            {% else %}
+                                <label>{{ _('Name') }}</label>
+                            {% endif %}
+                        </div>
+                        <div class="col-8 active-user-name">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">
+                            <label>{{ _('Birthday') }}</label>
+                        </div>
+                        <div class="col-8 active-user-dob">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">
+                            <label>{{ _('Gender') }}</label>
+                        </div>
+                        <div class="col-8 active-user-gender">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">
+                            <label>{{ _('Country') }}</label>
+                        </div>
+                        <div class="col-8 active-user-country">
+                        </div>
+                    </div>
+
+                </div>
+
+                <ul class="nav nav-pills nav-justified nav-recent mt-3">
+                    <li class="nav-item"><a class="nav-link active" data-toggle="pill" href="#recent-media-user">{{_("Media")}}</a></li>
+                    <li class="nav-item"><a class="nav-link" data-toggle="pill" href="#recent-files-user">{{_("Files")}}</a></li>
+                    <li class="nav-item"><a class="nav-link" data-toggle="pill" href="#recent-links-user">{{_("Links")}}</a></li>
+                </ul>
+
+                <div class="tab-content recent-items">
+                    <div id="recent-media-user" class="tab-pane in active">
+                        <div class="row m-0 mt-3 "></div>
+                    </div>
+                    <div id="recent-files-user" class="tab-pane fade">
+                        <div class="row m-0 mt-3"></div>
+                    </div>
+                    <div id="recent-links-user" class="tab-pane fade">
+                        <div class="row m-0 mt-3"></div>
+                    </div>
+                </div>
+
+                <div class="online-list-actions">
+                    <button class="btn btn-secondary btn-icon-split btn-xs max-recent" >
+                        <span class="icon text-white-50">
+                            <i class="fas fa-expand-arrows-alt"></i>
+                        </span>
+                        <span class="text">{{_("View More")}}</span>
+                    </button>
+                </div>
+
+            </div>
+            <div class="selected-chat height-fix search-panel" style="display:none">
+                <div class="search-input">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <button class="btn btn-secondary search-close" type="button">
+                                <i class="fas fa-chevron-left fa-sm"></i>
+                            </button>
+                        </div>
+                        <input type="text" id="search-query" class="form-control bg-light border-0 small" placeholder='{{_("Search in this conversation...")}}' aria-label="Search" >
+                        <div class="input-group-append">
+                            <button class="btn btn-secondary search-init" type="button">
+                                <i class="fas fa-search fa-sm"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-2">
+                    <div class="col p-0">
+                        <ul class="results"></ul>
+                    </div>
+                </div>
+            </div>
+            <div class="selected-chat height-fix recent-panel" style="display:none">
+                <ul class="nav nav-pills nav-justified nav-recent-max mt-3">
+                    <li class="nav-item"><a class="nav-link active" data-toggle="pill" href="#recent-max-media">{{_("Media")}}</a></li>
+                    <li class="nav-item"><a class="nav-link" data-toggle="pill" href="#recent-max-files">{{_("Files")}}</a></li>
+                    <li class="nav-item"><a class="nav-link" data-toggle="pill" href="#recent-max-links">{{_("Links")}}</a></li>
+                    <li class="nav-item"><a class="nav-link recent-media-close" data-toggle="pill"><i class="fas fa-times"></i></a></li>
+                </ul>
+
+                <div class="tab-content recent-max-items">
+                    <div id="recent-max-media" data-type="2" class="tab-pane in active">
+                        <div class="row m-0  "></div>
+                    </div>
+                    <div id="recent-max-files" data-type="6" class="tab-pane fade">
+                        <div class="row m-0"></div>
+                    </div>
+                    <div id="recent-max-links" data-type="5" class="tab-pane fade">
+                        <div class="row m-0 "></div>
+                    </div>
+                </div>
+                <div class="online-list-actions">
+                    <button class="btn btn-secondary btn-icon-split btn-xs load-more-media" >
+                    	<span class="icon text-white-50">
+                    		<i class="fas fa-caret-down"></i>
+                    	</span>
+                    	<span class="text">{{_("Load More")}}</span>
+                    </button>
+                </div>
+            </div>
+            <div class="selected-chat height-fix notification-panel" style="display:none">
+                <div class="right-panel-header">
+                    <div class="right-panel-text">
+                        {{_("Notifications")}}
+                    </div>
+                    <div class="right-panel-header-actions">
+                        <button class="btn btn-sm notification-read-all btn-tooltip" data-toggle="tooltip" data-placement="bottom" title="Mark All as Read"><i class="fas fa-check-square"></i></button>
+                        <button class="btn btn-sm notification-delete-all btn-tooltip" data-toggle="tooltip" data-placement="bottom" title="Delete All"><i class="far fa-trash-alt"></i></button>
+                        <button class="btn btn-sm notification-panel-close btn-tooltip" data-toggle="tooltip" data-placement="bottom" title="Close"><i class="far fa-times-circle"></i></button>
+                    </div>
+                    
+                </div>
+                <div class="card-body message-card-body notifications right-panel-messages">
+                    <div class="notification-list">
+
+                    </div>
+                </div>
+            </div>
+
+            {% if SETTINGS.radio %}
+            <div class="radio-panel animate__animated animate__slideInUp" >
+                <div class="radio-stations">
+                    {{_("Radio Station List")}}
+                </div>
+                <div class="radio-station-list">
+                {% for radio in radios %}
+                    <div class="radio-station" data-source="{{radio.source}}" data-thumb="{{radio.image}}" data-description="{{radio.description}}">
+                        {{radio.name}}
+                    </div>
+                {% endfor %}
+                </div>
+                <div class="radio-volume">
+                    <div id="radio-volume-display" class="radio-volume-display">
+                        <i class="fa fa-volume-down"></i>
+                    </div>
+                    <div class="radio-volume-control">
+                        <input id="radio-volume-control" type="range" min="1" max="100" value="50">
+                    </div>
+                </div>
+            </div>
+            <div class="radio-container" data-default-source="{{radios[0].source}}">
+
+                <div class="radio-thumb">
+                    <img src="{{MEDIA_URL}}/settings/{{radios[0].image}}" alt="">
+                </div>
+                <div class="radio-controls turn-on-play">
+                    <i class="far fa-play-circle fa-2x"></i>
+                </div>
+                <div class="radio-info">
+                    <div class="radio-title">
+                        {{radios[0].name}}
+                    </div>
+                    <div class="radio-desc marquee">
+                        {{radios[0].description}}
+                    </div>
+                </div>
+
+                <div class="dropdown radio-switcher dropleft dropup">
+                    <button class="btn" id="radio-selector">
+                        <i class="fas fa-sliders-h "></i>
+                    </button>
+                </div>
+
+            </div>
+            {% endif%}
+        </div>
+    </div>
+    <div class="gif-content" style="display:none;">
+        <div class="input-group input-group-sm gif-search-area">
+            <input type="text" class="form-control gif-search-input" placeholder="Search GIFs via Tenor" style="z-index:0">
+            <div class="input-group-append">
+                <button class="btn btn-success gif-search-btn" type="button"><i class="fas fa-search"></i></button>
+            </div>
+            <div class="input-group-append">
+                <button class="btn btn-danger gif-close" type="button"><i class="fas fa-times"></i></button>
+            </div>
+
+        </div>
+    	<div class="gifs">
+    		<span class="loading" style="display: none;"></span>
+    		<div class="gif-list row m-0"></div>
+    	</div>
+    </div>
+    <div class="sticker-content" style="display:none;">
+    	<div class="strickers">
+    		<span class="loading" style="display: none;"></span>
+            <div class="d-flex">
+                <ul class="nav nav-pills sticker-nav" id="pills-tab" role="tablist"></ul>
+                <button class="btn btn-danger sticker-close ml-auto" type="button"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="tab-content sticker-tab-content" id="pills-tabContent"> </div>
+    	</div>
+    </div>
+    <!-- Photoswipe Start. Root element of PhotoSwipe. Must have class pswp -->
+    <div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="pswp__bg"></div>
+        <div class="pswp__scroll-wrap">
+            <div class="pswp__container">
+                <div class="pswp__item"></div>
+                <div class="pswp__item"></div>
+                <div class="pswp__item"></div>
+            </div>
+            <div class="pswp__ui pswp__ui--hidden">
+                <div class="pswp__top-bar">
+                    <div class="pswp__counter"></div>
+                    <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                    <button class="pswp__button pswp__button--share" title="Share"></button>
+                    <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                    <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                    <div class="pswp__preloader">
+                        <div class="pswp__preloader__icn">
+                          <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                    <div class="pswp__share-tooltip"></div>
+                </div>
+                <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+                </button>
+                <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+                </button>
+                <div class="pswp__caption">
+                    <div class="pswp__caption__center"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--/Photoswipe End -->
+    <!-- Video Modal -->
+    <div class="modal fade" id="video-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <iframe id="video-iframe" src="{{STATIC_URL}}/img/loading-video.gif" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="" frameborder="0" ></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="video-modal-2">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <span id="video-embed-content"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="room-embed-modal">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{_("Room Embed Code")}}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <span id="room-embed-content"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade forward-modal" tabindex="-1" role="dialog" aria-labelledby="forwardModel" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-body forward-user-list">
+                    <div class="panel-content ">
+                        <!-- Nav pills -->
+                        <ul class="nav nav-pills nav-justified nav-sidebar">
+                            <li class="nav-item">
+                                <a class="nav-link active chat-tab forward-list-section" id="forward" data-toggle="pill" href="#forward-all-tab">{{ _('Forward message to') }}</a>
+                                <span class="forward-close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></span>
+                            </li>
+
+                            <li class="nav-search">
+                                <div class="input-group ">
+                                    <input type="text" class="form-control bg-light border-0 small room-user-search forward-room-user-search" placeholder="{{_('Search users or chat rooms...')}}" aria-label="Search" aria-describedby="basic-addon2">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-room-user-search" type="button">
+                                            <i class="fas fa-search fa-sm"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+
+                        <!-- Tab panes -->
+                        <div class="tab-content tab-sidebar">
+                            <div class="tab-pane container active" id="all-tab">
+                                <div class="forward-online-list "></div>
+                                <div class="forward-actions animate__animated animate__fadeInUp animate__fast hidden">
+                                    <div class="forward-name">
+                                    </div>
+                                    <div class="forward-button-container animate__animated animate__zoomIn">
+                                        <input type="hidden" id="forward_message" name="forward_message" value="">
+                                        <input type="hidden" id="forward_chat_type" name="forward_chat_type" value="">
+                                        <button class="forward-button btn btn-circle">
+                                            <i class="fas fa-paper-plane"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="auth-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                   
+                    {% include "login_form.html" %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% if SETTINGS.enable_codes %}
+    <div class="modal fade" id="code-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    {{ _('Share Code Snippet') }}
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col">
+                            <input type="text" maxlength="100" name="message-code-caption" id="message-code-caption" placeholder="{{ _('Title or Caption') }}" class="form-control">
+                        </div>
+                        <div class="col">
+                            <select class="form-control select2" style="width:100%" name="message-code-lang" id="message-code-lang">
+                                {% for key, code_lang in code_langs %}
+                                    <option value="{{key}}">{{ code_lang }} ({{key}})</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col">
+                            <textarea name="message-code" 
+                                placeholder="{{ _('Type your code here') }}" class="form-control"
+                                id="message-code" cols="30" rows="10"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="send-code btn btn-success">{{_("Send")}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    <div class="modal fade" id="roomModal" tabindex="-1" role="dialog" aria-labelledby="roomModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="roomModalLabel">{{_("Chat Rooms")}}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col">
+                            <div class="input-group ">
+                                <input type="text" class="form-control small room-sel-search" placeholder="{{_("Search rooms...")}}" aria-label="Search" >
+                                <div class="input-group-append">
+                                    <button class="btn room-sel-search-btn" type="button">
+                                        <i class="fas fa-search fa-sm"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="room-list-area">
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <h6>{{_("Joined")}}</h6>
+                            </div>
+                            <div class="col-12">
+                                <div class="row room-list">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <h6>{{_("Not Joined")}}</h6>
+                            </div>
+                            <div class="col-12">
+                                <div class="row not-joined-room-list">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade reaction-list-modal" role="dialog" aria-labelledby="reminderModel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title reaction-list-header"></h5>
+                    <input type="hidden" class="reacted_msg_id" value="">
+                    <input type="hidden" class="reacted_chat_type" value="">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body reaction-list-content">
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    <span class="reaction-box-content" style="display:none">
+        {% for i in 1..7 %}
+            {% if attribute(SETTINGS, "react_enable_" ~ i)  %}
+            <div class="reaction-icon react-{{i}} animate__animated animate__infinite {{attribute(SETTINGS, "react_css_" ~ i)}}" data-value="{{i}}">
+                <label>{{attribute(SETTINGS, "react_name_" ~ i)}}</label>
+            </div>
+            {% endif %}
+        {% endfor %}
+    </span>
+    <div class="call-alert" style="display:none">
+        <div class="animbox">
+            <div class="phone">
+                <div class="call-avatar">
+                    <img alt="">
+                </div>
+            </div>
+            <div class="circle1 call-anim"></div>
+            <div class="circle2 call-anim"></div>
+        </div>
+        <div class="call-actions">
+            <div class="caller-name"><span class="caller-name-text"></span> {{_("is calling you")}}</div> 
+            <div class="call-controlls">
+                <button class="btn btn-sm btn-success call-controll answer"> <i class="fas fa-phone"></i> {{_("Accept")}}</button>
+                <button class="btn btn-sm btn-danger call-controll hangup"> <i class="fas fa-phone-slash"></i> {{_("Reject")}}</button>
+            </div>
+        </div>
+        
+    </div>
+</div>
+<!-- End of Page Wrapper -->
+{% endblock %}
+{% block scripts %}<script src="{{ url('chatnet_js') }}{{VIEW_AS}}"></script>{% endblock %}

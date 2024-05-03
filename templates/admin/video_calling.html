@@ -1,0 +1,68 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{  url('dashboard') }}">{{_('Dashboard',2)}}</a></li>
+    <li class="breadcrumb-item active">{{_('Video Calling',2)}}</li>
+  </ol>
+</nav>
+<!-- Content Row -->
+<div class="row">
+    <div class="col-md-8">
+        <div class="card card-cloud-storage-settings">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    {{_("Video Calling",2)}}
+                </h6>
+            </div>
+            <div class="card-body">
+                <form id="video-calling-settings">
+                    {{ csrf_token()|raw }}
+
+                    <div class="form-group">
+                        <label for="video_calling">{{_("Enable Video Calling",2)}}</label>
+                        <select class="form-control" id="video_calling" name="video_calling">
+                            <option value="0" {% if SETTINGS.video_calling == 0 %}selected{% endif %}>{{_("No",2)}}</option>
+                            <option value="1" {% if SETTINGS.video_calling == 1 %}selected{% endif %}>{{_("Yes",2)}}</option>
+                        </select>
+                    </div>
+                    <hr />
+                    <span class="video-calling-area" {% if SETTINGS.video_calling == 0 %}style="display:none;"{% endif %}>
+                        <div class="form-group">
+                            <label for="video_calling_provider">{{_("Video Calling Provider",2)}}</label>
+                            <select class="form-control" id="video_calling_provider" name="video_calling_provider">
+                                <option value="agora" {% if SETTINGS.video_calling_provider == 'agora' %}selected{% endif %}>{{_("Agora",2)}}</option>
+                            </select>
+                        </div>
+                        <hr />
+                        <div class="form-group agora-settings video-settings" {% if SETTINGS.video_calling_provider != 'agora' %}style="display:none"{% endif %}>
+                            <label for="agora_app_id">{{_("Agora App Id",2)}}</label>
+                            <input type="text" class="form-control" id="agora_app_id" name="agora_app_id" value="{{SETTINGS.agora_app_id}}">
+                            <small class="form-text text-muted">
+                            </small>
+                        </div>
+                        <div class="form-group agora-settings video-settings" {% if SETTINGS.video_calling_provider != 'agora' %}style="display:none"{% endif %}>
+                            <label for="agora_app_certificate">{{_("Agora App Certificate",2)}}</label>
+                            <input type="text" class="form-control" id="agora_app_certificate" name="agora_app_certificate" value="{{SETTINGS.agora_app_certificate}}">
+                            <small class="form-text text-muted">
+                            </small>
+                        </div>
+
+                        <div class="form-group" >
+                            <label for="max_call_length">{{_("Maximum call length in minutes",2)}}</label>
+                            <input type="number" class="form-control" id="max_call_length" min="1" name="max_call_length" value="{{SETTINGS.max_call_length}}">
+                            <small class="form-text text-muted">
+                            </small>
+                        </div>
+
+                    </span>
+                    <button type="button" class="btn btn-primary update-settings" value="video-calling-settings">{{_("Update",2)}}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

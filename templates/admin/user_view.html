@@ -1,0 +1,224 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{  url('dashboard') }}">{{_("Dashboard",2)}}</a></li>
+    <li class="breadcrumb-item"><a href="{{  url('dashboard-user-list') }}">{{_("Users",2)}}</a></li>
+    {% if user_name %}
+        <li class="breadcrumb-item active" aria-current="page">{{user_name}}</li>
+    {% else %}
+        <li class="breadcrumb-item active" aria-current="page">{{_("Add User",2)}}</li>
+    {% endif %}
+  </ol>
+</nav>
+
+<!-- Content Row -->
+<div class="row ">
+    <div class="col-md-6">
+        <div class="card card-room-info">
+            <div class="card-body">
+                <form id="profile-form" enctype="multipart/form-data">
+                    <div class="alert alert-danger profile-error" role="alert" style="display:none"></div>
+                    {{ csrf_token()|raw }}
+                    <input type="hidden" name="user_id" value="{{id}}">
+                    <div class="form-group row">
+                        <div class="col-sm-4 imgUp d-block">
+                            <div class="imagePreview">
+                                <img class="img-responsive" height="100%" src="{{avatar_url}}"  alt="">
+                            </div>
+                            <label class="btn btn-primary btn-upload">
+                                {{_("Upload",2)}}<input type="file" class="upload-image" name="avatar" value="Upload Photo">
+                            </label>
+                        </div>
+                        <div class="col-sm-8">
+                            <div class="row">
+                                <label for="first_name" class="col-sm-5 col-form-label">{{_("Username",2)}}</label>
+                                <label for="first_name" class="col-sm-7 col-form-label">
+                                    <input type="text" class="form-control" id="user_name" name="user_name" value="{{ user_name }}" placeholder="{{_("Username",2)}}">
+                                </label>
+                            </div>
+                            <div class="row">
+                                <label for="first_name" class="col-sm-5 col-form-label">{{_("Member Since",2)}}</label>
+                                <label for="first_name" class="col-sm-7 col-form-label">{{created_at}}</label>
+                            </div>
+                            <div class="row">
+                                <label for="first_name" class="col-sm-5 col-form-label">{{_("Last Seen",2)}}</label>
+                                <label for="first_name" class="col-sm-7 col-form-label">{{last_seen}}</label>
+                            </div>
+                            <div class="row">
+                                <label for="first_name" class="col-sm-5 col-form-label">{{_("Status",2)}}</label>
+                                <div class="col-sm-7">
+                                    <select class="form-control" id="available_status" name="available_status">
+                                        {% if available_status != 1 and available_status != 2 %}
+                                        <option value="0" selected></option>
+                                        {% endif %}
+                                        <option value="1" {% if available_status == 1 %}selected{% endif %}>{{_("Active",2)}}</option>
+                                        <option value="2" {% if available_status == 2 %}selected{% endif %}>{{_("Inactive",2)}}</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="first_name" class="col-sm-3 col-form-label">{{_("First Name",2)}}</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="first_name" name="first_name" value="{{ first_name }}" placeholder="First Name">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="last_name" class="col-sm-3 col-form-label">{{_("Last Name",2)}}</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="last_name" name="last_name" value="{{ last_name }}" placeholder="Last Name">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="last_name" class="col-sm-3 col-form-label">{{_("Intro",2)}}</label>
+                        <div class="col-sm-9">
+                            <textarea name="about" id="about" rows="2" class="form-control" >{{ about }}</textarea>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="email" class="col-sm-3 col-form-label">{{_("Email",2)}}</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="email" name="email" value="{{ email }}" placeholder="Email">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="dob" class="col-sm-3 col-form-label">{{_("Birthday",2)}}</label>
+                        <div class="col-sm-9 date-dropdown">
+                            <input type="hidden" class="form-control dob" id="dob" name="dob" value="{{ dob }}" placeholder="Birthday">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="sex" class="col-sm-3 col-form-label">{{_("Gender",2)}}</label>
+                        <div class="col-sm-9">
+                            <select class="form-control" id="sex" name="sex">
+                                <option value="1" {% if sex == 1 %}selected{% endif %}>{{_("Male",2)}}</option>
+                                <option value="2" {% if sex == 2 %}selected{% endif %}>{{_("Female",2)}}</option>
+                                <option value="3" {% if sex == 3 %}selected{% endif %}>{{_("Other",2)}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="country" class="col-sm-3 col-form-label">{{_("Country",2)}}</label>
+                        <div class="col-sm-9">
+                            <select class="form-control select2" id="country" name="country">
+                                <option value=""></option>
+                                {% for country_code, country_name in country_list %}
+                                    <option {% if country == country_code %}selected{% endif %} value="{{ country_code }}">{{ country_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="sex" class="col-sm-3 col-form-label">{{_("Timezone",2)}}</label>
+                        <div class="col-sm-9">
+                            <select class="form-control select2" id="timezone" name="timezone">
+                                {{timezone_list|raw}}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="user_type" class="col-sm-3 col-form-label">{{_("User Type",2)}}</label>
+                        <div class="col-sm-9">
+                            <select class="form-control" id="user_type" name="user_type">
+                                <option value="1" {% if user_type == 1 %}selected{% endif %}>{{_("Administrator",2)}}</option>
+                                <option value="2" {% if user_type == 2 %}selected{% endif %}>{{_("Member",2)}}</option>
+                                <option value="3" {% if user_type == 3 %}selected{% endif %}>{{_("Guest",2)}}</option>
+                                <option value="4" {% if user_type == 4 %}selected{% endif %}>{{_("Moderator",2)}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="user_type" class="col-sm-3 col-form-label">{{_("User New Password")}}</label>
+                        <div class="col-sm-9">
+                            <div class="row">
+                                <div class="col">
+                                    <input type="password" class="form-control" autocomplete="new-password" id="password" name="password" value="" placeholder="New Password">
+                                </div>
+                                <div class="col">
+                                    <input type="password" class="form-control"  id="password_again" name="password_again" value="" placeholder="New Password Again">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-primary save-profile">{{_("Save Changes",2)}}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">{{_("Member Badges",2)}}</h6> 
+            </div>
+            <div class="card-body">
+                <form action="" id="assigned-badges">
+                    {{ csrf_token()|raw }}
+                    <input type="hidden" name="user_id" value="{{id}}">
+                    <div class="row">
+                        {% for badge in system_badges %}
+                            <div class="col-md-3 mb-3">
+                                <div class="custom-control custom-checkbox image-checkbox">
+                                    <input type="checkbox" value="{{badge.id}}" {% if badge.id in user_badges %}checked="checked"{% endif %}class="custom-control-input" name="badge_{{badge.id}}" id="badge_{{badge.id}}">
+                                    <label class="custom-control-label" for="badge_{{badge.id}}">
+                                        <img src="{% if badge.icon %}{{MEDIA_URL}}/settings/{{ badge.icon }}{% endif %}" alt="{{badge.name}}" class="img-fluid badge-icon">
+                                        {{badge.name}}
+                                    </label>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <button type="button" class="btn btn-primary assign-badges">{{_("Assign Badges",2)}}</button>
+                </form>
+            </div>
+        </div>
+        <div class="card card-room-info mt-3">
+            <div class="card-header py-3">
+              <h6 class="m-0 font-weight-bold text-primary">{{_("User Chat Rooms",2)}}</h6>
+            </div>
+            <div class="card-body">
+                <div class="table table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>{{_("Chat Room",2)}}</th>
+                                <th>{{_("Joined on",2)}}</th>
+                                <th>{{_("Action",2)}}</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user_room in user_rooms %}
+                                <tr>
+                                    <td>{{user_room.name}}</td>
+                                    <td>{{user_room.created_at}}</td>
+                                    <td>
+                                        <a href="javascript:void(0)" class="btn btn-danger btn-xs chatroom-user-restriction kick-btn" data-user="{{id}}" data-room="{{user_room.id}}" data-restriction-type="3"
+                                            {% if user_room.gu_status == "1" %} style="display:inline-block" {% else %} style="display:none" {% endif %}>{{_("Kick",2)}}
+                                        </a>
+                                        <a href="javascript:void(0)" class="btn btn-warning btn-xs chatroom-user-restriction unkick-btn" data-user="{{id}}" data-room="{{user_room.id}}" data-restriction-type="1"
+                                            {% if user_room.gu_status == "3" %} style="display:inline-block" {% else %} style="display:none" {% endif %}>{{_("Unkick",2)}}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a class="btn btn-xs btn-success" onclick="window.open('{{  url('chat-room', {'chatroomslug':user_room.slug}) }}?view-as={{id}}','popUpWindow','height=768,width=1024,left=100,top=100,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes');" href="javascript:void(0)"  data-toggle="tooltip" data-placement="top" title="View Chats"  >
+                                            {{_("Chats",2)}}
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

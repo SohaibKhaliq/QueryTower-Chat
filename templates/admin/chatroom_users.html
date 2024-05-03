@@ -1,0 +1,97 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{  url('dashboard') }}">{{_("Dashboard",2)}}</a></li>
+    <li class="breadcrumb-item"><a href="{{  url('dashboard-chatroom-list') }}">{{chat_room.name}}</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{{_("Users",2)}}</li>
+
+  </ol>
+</nav>
+
+<!-- Content Row -->
+<div class="row ">
+    <div class="col-md-12">
+        <div class="card card-room-list">
+            <div class="card-header d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    {{chat_room.name}} {{_("Room Users",2)}}
+                    <input type="hidden" id="room_id" value="{{chat_room.id}}">
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>{{_("Name",2)}}</th>
+                                <th>{{_("Email",2)}}</th>
+                                <th>{{_("User Type",2)}}</th>
+                                <th>{{_("Status",2)}}</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for room_user in room_users %}
+                                {% if room_user.id %}
+                                <tr>
+                                    <td>
+                                        {% if room_user.first_name %}
+                                            {{room_user.first_name}} {{room_user.last_name}}
+                                        {% else %}
+                                            <span class="text-muted">{{_("Deleted User",2)}}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{room_user.email}}</td>
+                                    <td>
+                                        {% if room_user.user_type == 1 %}
+                                            Admin
+                                        {% elseif room_user.user_type == 2 %}
+                                            Member
+                                        {% elseif room_user.user_type == 3 %}
+                                            Guest
+                                        {% elseif room_user.user_type == 4 %}
+                                            Moderator
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if room_user.available_status == 1 %}
+                                            <span class="badge badge-primary">{{_("Active",2)}}</span>
+                                        {% elseif room_user.available_status == 2 %}
+                                            <span class="badge badge-warning">{{_("Inactive",2)}}</span>
+                                        {% endif %}
+                                    </td>
+
+                                    <td class="nowrap">
+                                        <a class="btn btn-xs btn-success" href="{{ url('dashboard-user-view') }}?user={{room_user.id}}"  data-toggle="tooltip" data-placement="top" title="View User">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        {% if room_user.id != USER.id and room_user.user_type==2 %}
+                                            <button {% if room_user.is_mod==0 %}style="display:none;"{% endif %}class="btn btn-success btn-xs chatroom-user-mod remove-mod" data-mod-type="0" data-user="{{room_user.id}}">
+                                                {{_("Remove Mod",2)}}
+                                            </button>
+                                            <button {% if room_user.is_mod==1 %}style="display:none;"{% endif %} class="btn btn-success btn-xs chatroom-user-mod add-mod" data-mod-type="1" data-user="{{room_user.id}}">
+                                                {{_("Make Mod",2)}}
+                                            </button>
+                                        {% endif %}
+                                        <a href="javascript:void(0)" class="btn btn-danger btn-xs chatroom-user-restriction kick-btn" data-user="{{room_user.id}}" data-room="{{chat_room.id}}" data-restriction-type="3"
+                                            {% if room_user.status == "1" %} style="display:inline-block" {% else %} style="display:none" {% endif %}>{{_("Kick",2)}}
+                                        </a>
+                                        <a href="javascript:void(0)" class="btn btn-warning btn-xs chatroom-user-restriction unkick-btn" data-user="{{room_user.id}}" data-room="{{chat_room.id}}" data-restriction-type="1"
+                                            {% if room_user.status == "3" %} style="display:inline-block" {% else %} style="display:none" {% endif %}>{{_("Unkick",2)}}
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

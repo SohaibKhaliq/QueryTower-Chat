@@ -1,0 +1,264 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{  url('dashboard') }}">{{_("Dashboard",2)}}</a></li>
+    <li class="breadcrumb-item">{{_("Settings",2)}}</li>
+    <li class="breadcrumb-item active" aria-current="page">{{_("Themes",2)}}</li>
+  </ol>
+</nav>
+
+<!-- Content Row -->
+<div class="row">
+    <div class="col-md-8">
+        <div class="card card-color-settings">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    {{_("Theme Settings",2)}}
+                </h6>
+            </div>
+            <div class="card-body">
+                <form id="color-settings">
+                    {{ csrf_token()|raw }}
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <label class="" for="chatpage_layout">{{_("Chat Page Layout",2)}}</label>
+                            <select class="form-control" id="chatpage_layout" name="chatpage_layout">
+                                <option value="full" {% if SETTINGS.chatpage_layout == "full" %}selected{% endif %}>Full Width</option>
+                                <option value="boxed" {% if SETTINGS.chatpage_layout == "boxed" %}selected{% endif %}>Boxed</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <label class="" for="theme">{{_("Default Frontend Theme",2)}}</label>
+                            <select class="form-control" id="theme" name="theme">
+                                <option value="default" {% if SETTINGS.theme == "default" %}selected{% endif %}>Hybrid</option>
+                                <option value="dark" {% if SETTINGS.theme == "dark" %}selected{% endif %}>Dark</option>
+                                 <option value="light" {% if SETTINGS.theme == "light" %}selected{% endif %}>Light</option>
+                                <option value="custom" {% if SETTINGS.theme == "custom" %}selected{% endif %}>Custom</option>
+                            </select>
+                        </div>
+                    </div>
+                    <span class="custom-colors"
+                        {% if SETTINGS.theme == "custom" %}
+                            style="display:block;"
+                        {% else %}
+                            style="display:none;"
+                        {% endif %}
+                    >   
+                        
+                        <hr>
+                        <div>
+                            <label class="h4"><b>{{_("Homepage Colors",2)}}</b></label>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label for="home_bg_gradient_1">{{_("Background Gradient 1",2)}}</label>
+                                <div class="input-group">
+                                    <input type="text" name="home_bg_gradient_1" value="{{SETTINGS.home_bg_gradient_1|default('#1da1f5')}}" class="form-control w-75 color-input">
+                                    <input type="color" value="{{SETTINGS.home_bg_gradient_1|default('#1da1f5')}}" class="form-control color-picker">
+                                </div>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="home_bg_gradient_2">{{_("Background Gradient 2",2)}}</label>
+                                <div class="input-group">
+                                    <input type="text" name="home_bg_gradient_2" value="{{SETTINGS.home_bg_gradient_2|default('#8038d9')}}" class="form-control w-75 color-input">
+                                    <input type="color" value="{{SETTINGS.home_bg_gradient_2|default('#8038d9')}}" class="form-control color-picker">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <label for="home_text_color">{{_("Text Color",2)}}</label>
+                                <div class="input-group">
+                                    <input type="text" name="home_text_color" value="{{SETTINGS.home_text_color|default('#555555')}}" class="form-control w-75 color-input">
+                                    <input type="color" value="{{SETTINGS.home_text_color|default('#555555')}}" class="form-control color-picker">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <label for="home_header_bg_color">{{_("Header background color",2)}}</label>
+                                <div class="input-group">
+                                    <input type="text" name="home_header_bg_color" value="{{SETTINGS.home_header_bg_color|default('#1f2d41')}}" class="form-control w-75 color-input">
+                                    <input type="color" value="{{SETTINGS.home_header_bg_color|default('#1f2d41')}}" class="form-control color-picker">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <label for="home_header_text_color">{{_("Header Text Color",2)}}</label>
+                                <div class="input-group">
+                                    <input type="text" name="home_header_text_color" value="{{SETTINGS.home_header_text_color|default('#ffffff')}}" class="form-control w-75 color-input">
+                                    <input type="color" value="{{SETTINGS.home_header_text_color|default('#ffffff')}}" class="form-control color-picker">
+                                </div>
+                            </div>
+                        </div>
+                        <hr />
+                        <div>
+                            <label class="h4"><b>{{_("Chatpage - User List",2)}}</b></label>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label for="chat_userlist_bg_gradient_1">{{_("Background Gradient 1",2)}}</label>
+                                <div class="input-group">
+                                    <input type="text" name="chat_userlist_bg_gradient_1" value="{{SETTINGS.chat_userlist_bg_gradient_1|default('#4e4f53')}}" class="form-control w-75 color-input">
+                                    <input type="color" value="{{SETTINGS.chat_userlist_bg_gradient_1|default('#4e4f53')}}" class="form-control color-picker">
+                                </div>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="chat_userlist_bg_gradient_2">{{_("Background Gradient 2",2)}}</label>
+                                <div class="input-group">
+                                    <input type="text" name="chat_userlist_bg_gradient_2" value="{{SETTINGS.chat_userlist_bg_gradient_2|default('#1f2024')}}" class="form-control w-75 color-input">
+                                    <input type="color" value="{{SETTINGS.chat_userlist_bg_gradient_2|default('#1f2024')}}" class="form-control color-picker">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <label for="chat_userlist_text_color">{{_("User List Text Color",2)}}</label>
+                                <div class="input-group">
+                                    <input type="text" name="chat_userlist_text_color" value="{{SETTINGS.chat_userlist_text_color|default('#ffffff')}}" class="form-control w-75 color-input">
+                                    <input type="color" value="{{SETTINGS.chat_userlist_text_color|default('#ffffff')}}" class="form-control color-picker">
+                                </div>
+                            </div>
+                        </div>
+                        <hr />
+                        <div>
+                            <label class="h4"><b>{{_("Chat Page - Chat Container",2)}}</b></label>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label for="chat_container_bg_gradient_1">{{_("Background Gradient 1",2)}}</label>
+                                <div class="input-group">
+                                    <input type="text" name="chat_container_bg_gradient_1" value="{{SETTINGS.chat_container_bg_gradient_1|default('#ffffff')}}" class="form-control w-75 color-input">
+                                    <input type="color" value="{{SETTINGS.chat_container_bg_gradient_1|default('#ffffff')}}" class="form-control color-picker">
+                                </div>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="chat_container_bg_gradient_2">{{_("Background Gradient 2",2)}}</label>
+                                <div class="input-group">
+                                    <input type="text" name="chat_container_bg_gradient_2" value="{{SETTINGS.chat_container_bg_gradient_2|default('#ffffff')}}" class="form-control w-75 color-input">
+                                    <input type="color" value="{{SETTINGS.chat_container_bg_gradient_2|default('#ffffff')}}" class="form-control color-picker">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <label for="chat_container_text_color">{{_("Chat Container Text Color",2)}}</label>
+                                <div class="input-group">
+                                    <input type="text" name="chat_container_text_color" value="{{SETTINGS.chat_container_text_color|default('#858796')}}" class="form-control w-75 color-input">
+                                    <input type="color" value="{{SETTINGS.chat_container_text_color|default('#858796')}}" class="form-control color-picker">
+                                </div>
+                            </div>
+                        </div>
+                        <hr />
+                        <div>
+                            <label class="h4"><b>{{_("Chatpage - Chat Container - Received Chat",2)}}</b></label>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label for="chat_container_received_bubble_color">{{_("Bubble Color",2)}}</label>
+                                <div class="input-group">
+                                    <input type="text" name="chat_container_received_bubble_color" value="{{SETTINGS.chat_container_received_bubble_color|default('#f5f5f5')}}" class="form-control w-75 color-input">
+                                    <input type="color" value="{{SETTINGS.chat_container_received_bubble_color|default('#f5f5f5')}}" class="form-control color-picker">
+                                </div>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="chat_container_received_text_color">{{_("Text Color",2)}}</label>
+                                <div class="input-group">
+                                    <input type="text" name="chat_container_received_text_color" value="{{SETTINGS.chat_container_received_text_color|default('#858796')}}" class="form-control w-75 color-input">
+                                    <input type="color" value="{{SETTINGS.chat_container_received_text_color|default('#858796')}}" class="form-control color-picker">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <label for="chat_container_username_text_color">{{_("Group Chat Username Text Color",2)}}</label>
+                                <div class="input-group">
+                                    <input type="text" name="chat_container_username_text_color" value="{{SETTINGS.chat_container_username_text_color|default('#4e73df')}}" class="form-control w-75 color-input">
+                                    <input type="color" value="{{SETTINGS.chat_container_username_text_color|default('#4e73df')}}" class="form-control color-picker">
+                                </div>
+                            </div>
+                        </div>
+                        <hr />
+                        <div>
+                            <label class="h4"><b>{{_("Chat Page - Chat Container - Sent Chat",2)}}</b></label>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label for="chat_container_sent_bubble_color">{{_("Bubble Color",2)}}</label>
+                                <div class="input-group">
+                                    <input type="text" name="chat_container_sent_bubble_color" value="{{SETTINGS.chat_container_sent_bubble_color|default('#435f7a')}}" class="form-control w-75 color-input">
+                                    <input type="color" value="{{SETTINGS.chat_container_sent_bubble_color|default('#435f7a')}}" class="form-control color-picker">
+                                </div>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="chat_container_sent_text_color">{{_("Text Color",2)}}</label>
+                                <div class="input-group">
+                                    <input type="text" name="chat_container_sent_text_color" value="{{SETTINGS.chat_container_sent_text_color|default('#f5f5f5')}}" class="form-control w-75 color-input">
+                                    <input type="color" value="{{SETTINGS.chat_container_sent_text_color|default('#f5f5f5')}}" class="form-control color-picker">
+                                </div>
+                            </div>
+                        </div>
+                        <hr />
+                        <div>
+                            <label class="h4"><b>{{_("Chatpage - Chat Info",2)}}</b></label>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label for="chat_info_bg_gradient_1">{{_("Background Gradient 1",2)}}</label>
+                                <div class="input-group">
+                                    <input type="text" name="chat_info_bg_gradient_1" value="{{SETTINGS.chat_info_bg_gradient_1|default('#e9ebec')}}" class="form-control w-75 color-input">
+                                    <input type="color" value="{{SETTINGS.chat_info_bg_gradient_1|default('#e9ebec')}}" class="form-control color-picker">
+                                </div>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="chat_info_bg_gradient_2">{{_("Background Gradient 2",2)}}</label>
+                                <div class="input-group">
+                                    <input type="text" name="chat_info_bg_gradient_2" value="{{SETTINGS.chat_info_bg_gradient_2|default('#cfd3d6')}}" class="form-control w-75 color-input">
+                                    <input type="color" value="{{SETTINGS.chat_info_bg_gradient_2|default('#cfd3d6')}}" class="form-control color-picker">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <label for="chat_info_section_header_color">{{_("Chat Info Section Header Color",2)}}</label>
+                                <div class="input-group">
+                                    <input type="text" name="chat_info_section_header_color" value="{{SETTINGS.chat_info_section_header_color|default('#2b3036')}}" class="form-control w-75 color-input">
+                                    <input type="color" value="{{SETTINGS.chat_info_section_header_color|default('#2b3036')}}" class="form-control color-picker">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <label for="chat_info_text_color">{{_("Chat Info Text Color",2)}}</label>
+                                <div class="input-group">
+                                    <input type="text" name="chat_info_text_color" value="{{SETTINGS.chat_info_text_color|default('#455A64')}}" class="form-control w-75 color-input">
+                                    <input type="color" value="{{SETTINGS.chat_info_text_color|default('#455A64')}}" class="form-control color-picker">
+                                </div>
+                            </div>
+                        </div>
+                    </span>
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <label class="" for="dashboard_theme">{{_("Dashboard Theme",2)}}</label>
+                            <select class="form-control" id="dashboard_theme" name="dashboard_theme">
+                                <option value="dark" {% if SETTINGS.dashboard_theme == "dark" %}selected{% endif %}>Dark</option>
+                                <option value="light" {% if SETTINGS.dashboard_theme == "light" %}selected{% endif %}>Light</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-primary update-settings" value="color-settings">{{_("Update",2)}}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

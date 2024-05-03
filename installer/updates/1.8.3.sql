@@ -1,0 +1,1 @@
+UPDATE `cn_settings` SET `value` = '1.8.3' WHERE `cn_settings`.`name` = 'current_version';

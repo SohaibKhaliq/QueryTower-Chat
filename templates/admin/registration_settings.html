@@ -1,0 +1,120 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{  url('dashboard') }}">{{_("Dashboard",2)}}</a></li>
+    <li class="breadcrumb-item">{{_("Settings",2)}}</li>
+    <li class="breadcrumb-item active" aria-current="page">{{_("Registration",2)}}</li>
+  </ol>
+</nav>
+
+<!-- Content Row -->
+<div class="row ">
+    <div class="col-md-8">
+        <div class="card card-registration-settings">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    {{_("Registration Settings",2)}}
+                </h6>
+            </div>
+            <div class="card-body">
+                <form id="registration-settings">
+                    {{ csrf_token()|raw }}
+                    <div class="form-group">
+                        <label for="member_registration">{{_("Enable User Registration?",2)}}</label>
+                        <select class="form-control" id="member_registration" name="member_registration">
+                            <option value="1" {% if SETTINGS.member_registration == 1 %}selected{% endif %}>{{_("Yes",2)}}</option>
+                            <option value="0" {% if SETTINGS.member_registration == 0 %}selected{% endif %}>{{_("No",2)}}</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="register_dob">{{_("Ask for date of birth at member registration",2)}}</label>
+                        <select class="form-control" id="register_dob" name="register_dob">
+                            <option value="1" {% if SETTINGS.register_dob == 1 %}selected{% endif %}>{{_("Yes",2)}}</option>
+                            <option value="0" {% if SETTINGS.register_dob == 0 %}selected{% endif %}>{{_("No",2)}}</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="register_sex">{{_("Ask for gender at member registration",2)}}</label>
+                        <select class="form-control" id="register_sex" name="register_sex">
+                            <option value="1" {% if SETTINGS.register_sex == 1 %}selected{% endif %}>{{_("Yes",2)}}</option>
+                            <option value="0" {% if SETTINGS.register_sex == 0 %}selected{% endif %}>{{_("No",2)}}</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="register_country">{{_("Ask for country at member registration",2)}}</label>
+                        <select class="form-control" id="register_country" name="register_country">
+                            <option value="1" {% if SETTINGS.register_country == 1 %}selected{% endif %}>{{_("Yes",2)}}</option>
+                            <option value="0" {% if SETTINGS.register_country == 0 %}selected{% endif %}>{{_("No",2)}}</option>
+                        </select>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for="guest_mode">{{_("Enable Guest Mode?",2)}}</label>
+                            <select class="form-control" id="guest_mode" name="guest_mode">
+                                <option value="0" {% if SETTINGS.guest_mode == 0 %}selected{% endif %}>{{_("No",2)}}</option>
+                                <option value="1" {% if SETTINGS.guest_mode == 1 %}selected{% endif %}>{{_("Yes",2)}}</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="guest_name_edit">{{_("Enable Guest Name Edit?",2)}}</label>
+                            <select class="form-control" id="guest_name_edit" name="guest_name_edit">
+                                <option value="0" {% if SETTINGS.guest_name_edit == 0 %}selected{% endif %}>{{_("No",2)}}</option>
+                                <option value="1" {% if SETTINGS.guest_name_edit == 1 %}selected{% endif %}>{{_("Yes",2)}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="guest_dob">{{_("Ask for date of birth at guest login",2)}}</label>
+                        <select class="form-control" id="guest_dob" name="guest_dob">
+                            <option value="0" {% if SETTINGS.guest_dob == 0 %}selected{% endif %}>{{_("No",2)}}</option>
+                            <option value="1" {% if SETTINGS.guest_dob == 1 %}selected{% endif %}>{{_("Yes",2)}}</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="guest_sex">{{_("Ask for gender at guest login",2)}}</label>
+                        <select class="form-control" id="guest_sex" name="guest_sex">
+                            <option value="0" {% if SETTINGS.guest_sex == 0 %}selected{% endif %}>{{_("No",2)}}</option>
+                            <option value="1" {% if SETTINGS.guest_sex == 1 %}selected{% endif %}>{{_("Yes",2)}}</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="guest_country">{{_("Ask for country at guest login",2)}}</label>
+                        <select class="form-control" id="guest_country" name="guest_country">
+                            <option value="0" {% if SETTINGS.guest_country == 0 %}selected{% endif %}>{{_("No",2)}}</option>
+                            <option value="1" {% if SETTINGS.guest_country == 1 %}selected{% endif %}>{{_("Yes",2)}}</option>
+                        </select>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for="reg_autodetect_country">{{_("Auto Detect Country",2)}}</label>
+                            <select class="form-control" id="reg_autodetect_country" name="autodetect_country">
+                                <option value="0" {% if SETTINGS.autodetect_country == 0 %}selected{% endif %}>{{_("No",2)}}</option>
+                                <option value="1" {% if SETTINGS.autodetect_country == 1 %}selected{% endif %}>{{_("Yes",2)}}</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-6 geoip_api_endpoint_area" {% if SETTINGS.autodetect_country == 0 %}style="display:none;"{% endif %}>
+                            <label for="geoip_api_endpoint">{{_("GeoIP API Endpoint",2)}}</label>
+                            <input type="text" class="form-control" id="geoip_api_endpoint" name="geoip_api_endpoint" value="{{SETTINGS.geoip_api_endpoint|default("http://ip-api.com/json")}}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="enable_email_verification">{{_("Enable Email Verification",2)}}</label>
+                        <select class="form-control" id="enable_email_verification" name="enable_email_verification">
+                            <option value="0" {% if SETTINGS.enable_email_verification == 0 %}selected{% endif %}>{{_("No",2)}}</option>
+                            <option value="1" {% if SETTINGS.enable_email_verification == 1 %}selected{% endif %}>{{_("Yes",2)}}</option>
+                        </select>
+                    </div>
+
+                    <button type="button" class="btn btn-primary update-settings" value="registration-settings">{{_("Update",2)}}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

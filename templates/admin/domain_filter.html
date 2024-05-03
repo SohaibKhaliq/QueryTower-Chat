@@ -1,0 +1,55 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{  url('dashboard') }}">{{_('Dashboard',2)}}</a></li>
+    <li class="breadcrumb-item">{{_('Spam Control',2)}}</li>
+    <li class="breadcrumb-item active" aria-current="page">{{_('Domain Filter',2)}}</li>
+  </ol>
+</nav>
+
+<!-- Content Row -->
+<div class="row">
+    <div class="col-md-8">
+        <div class="card card-domain-filter-settings">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    {{_('Domain Filter',2)}}
+                </h6>
+            </div>
+            <div class="card-body">
+                <form id="domain-filter-settings">
+                    {{ csrf_token()|raw }}
+                    <div class="form-group">
+                        <label for="domain_filter">{{_('Enable Domain Filter',2)}}</label>
+                        <select class="form-control" id="domain_filter" name="domain_filter">
+                            <option value="0" {% if SETTINGS.domain_filter == 0 %}selected{% endif %}>{{_('No',2)}}</option>
+                            <option value="1" {% if SETTINGS.domain_filter == 1 %}selected{% endif %}>{{_('Yes',2)}}</option>
+                        </select>
+                    </div>
+                    <span class="domain-filter-area" {% if SETTINGS.domain_filter == 0 %}style="display:none;"{% endif %}>
+                        <div class="form-group">
+                            <label for="domain_filter_type">{{_('Domain Filter Type',2)}}</label>
+                            <select class="form-control" id="domain_filter_type" name="domain_filter_type">
+                                <option value="blacklist" {% if SETTINGS.domain_filter_type == 'blacklist' %}selected{% endif %}>{{_('Blacklist',2)}}</option>
+                                <option value="whitelist" {% if SETTINGS.domain_filter_type == 'whitelist' %}selected{% endif %}>{{_('Whitelist',2)}}</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="domains_list">{{_('Domain List',2)}}</label>
+                            <textarea name="domains_list" id="domains_list" class="form-control" rows="6" cols="80">{{SETTINGS.domains_list}}</textarea>
+                            <small id="domains_list_help" class="form-text text-muted">
+                                {{_('Domain list must be comma separated list. Ex: google.com, facebook.com, bbc.com',2)}}
+                            </small>
+                        </div>
+                    </span>
+                    <button type="button" class="btn btn-primary update-settings" value="domain-filter-settings">{{_('Update',2)}}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{  url('dashboard') }}">{{_("Dashboard",2)}}</a></li>
+    <li class="breadcrumb-item"><a href="{{  url('dashboard-languages') }}"></a>{{_("Languages",2)}}</li>
+    <li class="breadcrumb-item active" aria-current="page">{{_("Translation",2)}}</li>
+  </ol>
+</nav>
+
+<!-- Content Row -->
+<div class="row ">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <select class="form-control trans-lang-switch">
+                        {% for lang in languages %}
+                        <option value="{{lang.code}}"
+                            {% if lang.code == selected_lang %}selected{% endif %}
+                        >{{lang.name}}</option>
+                        {% endfor %}
+                    </select>
+                    <select class="form-control trans-section-switch">
+                        <option value="1" {% if selected_section == 1 %}selected{% endif %}>{{_("Frontend",2)}}</option>
+                        <option value="2" {% if selected_section == 2 %}selected{% endif %}>{{_("Admin Panel",2)}}</option>
+                    </select>
+                </h6>
+            </div>
+            <form id="lang-translation">
+                <div class="card-body card-language">
+                    {{ csrf_token()|raw }}
+                    <input type="hidden" name="lang" value="{{selected_lang}}">
+                    {% for translation in lang_terms %}
+                    <div class="form-group row trans-phrase">
+                        <div class="col-sm-1 pr-0 col-form-label">{{loop.index}}</div>
+                        <label for="translation" class="col-sm-5 col-form-label">{{translation.term}}</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" name="{{translation.term_id}}" value="{{translation.translation}}">
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="card-footer">
+                    {% if(lang_terms) %}
+                    <button type="button" class="btn btn-primary update-translation" >
+                        
+                        {{_("Update",2)}}
+                    </button>
+                    {% else %}
+                        <p class="text-warning">Please Go Back & Re Scan</p>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

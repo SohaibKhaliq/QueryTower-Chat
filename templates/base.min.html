@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en" class="{{THEME}} {{LANG['direction']}} base-min">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no shrink-to-fit=no">
+    {% if chat_room.name%}
+        <title>{{ chat_room.name }} - {{ SETTINGS.site_name }}</title>
+    {% else %}
+        <title>{{ title ? title : SETTINGS.site_name }}</title>
+    {% endif %}
+
+    {% if SETTINGS.favicon %}
+        <link rel="icon" type="image/png" href="{{MEDIA_URL}}/settings/{{SETTINGS.favicon}}"/>
+    {% endif %}
+
+    {% if chat_room.cover_image %}
+    <meta property="og:image" content="{{MEDIA_URL}}/chatrooms/{{chat_room.cover_image}}" />
+    {% elseif  SETTINGS.default_ogimage %}
+    <meta property="og:image" content="{{MEDIA_URL}}/settings/{{SETTINGS.default_ogimage}}" />
+    {% else %}
+    <meta property="og:image" content="{{STATIC_URL}}/img/ogimage.png" />
+    {% endif %}
+    {% if SETTINGS.pwa_enabled %}
+    <link rel="manifest" href="{{ url('manifest') }}"></link>
+    {% endif %}
+    {% if chat_room %}
+        {% if chat_room.description %}
+        <meta name="description" content="{{ chat_room.description }}" />
+        {% else %}
+        <meta name="description" content="Join with {{ chat_room.name }} chat room at {{SETTINGS.site_name}}.
+        {% if chat_room.is_visible %}
+            {% if chat_room.is_protected %}
+                {{ chat_room.name }} is password protected chat room. You need {{ chat_room.name }} password to log in to the chat room.
+            {% else %}
+                {{ chat_room.name }} is public chat room. Everyone on {{SETTINGS.site_name}} will be able to join.
+            {% endif %}
+        {% else %}
+            {{ chat_room.name }} is private chat room. Only people with the invite link will be able to join.
+            {% if chat_room.is_protected %}
+                {{ chat_room.name }} is password protected chat room. You need {{ chat_room.name }} password to log in to the chat room.
+            {% endif %}
+        {% endif %}" />
+        {% endif %}
+    {% else %}
+        <meta name="description" content="{{SETTINGS.site_description}}">
+    {% endif %}
+    {% if SETTINGS.pwa_enabled %}
+    <script type="module">
+        import 'https://cdn.jsdelivr.net/npm/@pwabuilder/pwaupdate';
+        const el = document.createElement('pwa-update');
+        document.body.appendChild(el);
+    </script>
+    {% endif %}
+    <!-- Custom fonts for this template-->
+    <link href="{{STATIC_URL}}/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family={{GOOGLE_FONT_FAMILY?GOOGLE_FONT_FAMILY:Poppins}}:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400;1,500&display=swap">
+    <link rel="stylesheet" media="print" onload="this.onload=null;this.removeAttribute('media');" href="https://fonts.googleapis.com/css2?family={{GOOGLE_FONT_FAMILY?GOOGLE_FONT_FAMILY:Poppins}}:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400;1,500&display=swap">
+    <link href="{{STATIC_URL}}/vendor/select2/select2.min.css" rel="stylesheet" />
+
+    <!-- Custom styles for this template-->
+    <link href="{{STATIC_URL}}/css/styles.css?v={{CV}}" rel="stylesheet">
+    <link href="{{STATIC_URL}}/css/frontend.css?v={{CV}}" rel="stylesheet">
+    <link href="{{ url('color_css') }}" rel="stylesheet">
+    {% if SETTINGS.header_css %}
+        <style media="screen">
+            {{SETTINGS.header_css}}
+        </style>
+    {% endif %}
+    {{SETTINGS.header_js|htmlspecialchars_decode|raw}}
+</head>
+
+<body class="base-mini-bg">
+
+    {% block container %}{% endblock %}
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="{{STATIC_URL}}/vendor/jquery/jquery.min.js"></script>
+    <script src="{{STATIC_URL}}/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="{{STATIC_URL}}/vendor/dropdown-datepicker/js/jquery.date-dropdowns.min.js"></script>
+    <script src="{{STATIC_URL}}/vendor/select2/select2.min.js"></script>
+    <script src="{{STATIC_URL}}/js/moment.min.js"></script>
+    <script src="{{STATIC_URL}}/js/moment-timezone-with-data.min.js"></script>
+    <script src="{{STATIC_URL}}/js/loadingoverlay.min.js" ></script>
+    
+    <!-- Core plugin JavaScript-->
+
+    {% if SETTINGS.enable_recaptcha %}
+    <script src="https://www.google.com/recaptcha/api.js{% if SETTINGS.recaptcha_version==3 %}?render={{SETTINGS.recaptcha_sitekey}}&onload=reCaptchaCallback&render=explicit{% endif %}" async defer></script>
+    {% endif %}
+
+    <script type="text/javascript">
+
+        function loading(div, status) {
+            $(div).LoadingOverlay(status, {
+                image: "",
+                custom: '<div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>',
+            });
+        }
+
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            localStorage.setItem('activeTab', $(e.target).attr('href'));
+        });
+
+        var activeTab = localStorage.getItem('activeTab');
+        if(activeTab){
+            $('.nav-item a[href="' + activeTab + '"]').tab('show');
+        }
+        function getCookie(cname) {
+            var name = cname + "=";
+            var decodedCookie = decodeURIComponent(document.cookie);
+            var ca = decodedCookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) === ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) === 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        }
+
+
+        $( document ).ready(function() {
+            // init date dropdown
+            $(".dob").dateDropdowns();
+            $('.select2').select2({
+                theme: 'bootstrap4'
+            });
+
+            if ( $( "#auto-timezone" ).length ) {
+                $('#auto-timezone').val(moment.tz.guess());
+            }
+        });
+
+        function reCaptchaCallback(){
+            grecaptcha.ready(function () {
+                grecaptcha.execute('{{SETTINGS.recaptcha_sitekey}}', { action: 'messages' }).then(function (token) {
+                    if (typeof(document.getElementById('g-recaptcha-response')) != 'undefined' && document.getElementById('g-recaptcha-response') != null){
+                        var recaptchaResponse = document.getElementById('g-recaptcha-response');
+                        recaptchaResponse.value = token;
+                    }
+                });
+            });
+        }
+
+        async function postData(url, data) {
+            const response = await fetch(url, {
+                method: 'POST',
+                mode: 'same-origin', // no-cors, *cors, same-origin
+                cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+                credentials: 'include', // include, *same-origin, omit
+                //headers: {
+                   // 'Content-Type': 'application/json'
+                    //'Content-Type': 'application/x-www-form-urlencoded',
+                //},
+                redirect: 'follow', // manual, *follow, error
+                referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+                body: data // body data type must match "Content-Type" header
+            });
+            return response.json(); // parses JSON response into native JavaScript objects
+        }
+
+
+        $(document).on("click", "#main-loginx", function (e) {
+            e.preventDefault();
+            loading(".form-content", "show");
+            var formData = new FormData(document.getElementById("login-form-member"));    
+            /*
+            var object = {};
+            formData.forEach(function(value, key){
+                object[key] = value;
+            });
+            var data = JSON.stringify(object);
+            */
+            postData("{{ url('ajax-login') }}", formData)
+            .then(data => {
+                $('.msg-cont').html(data.message);
+                if(data.success){
+                    //window.location.href = data.next;
+                }
+                loading(".form-content", "hide");
+            });
+        });  
+
+    </script>
+
+
+
+</body>
+
+</html>

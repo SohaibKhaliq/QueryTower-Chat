@@ -1,0 +1,138 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{  url('dashboard') }}">{{_("Dashboard",2)}}</a></li>
+    <li class="breadcrumb-item"><a href="{{  url('dashboard-user-list') }}">{{_("Users",2)}}</a></li>
+    {% if user_name %}
+        <li class="breadcrumb-item active" aria-current="page">{{user_name}}</li>
+    {% else %}
+        <li class="breadcrumb-item active" aria-current="page">{{_("Add User",2)}}</li>
+    {% endif %}
+  </ol>
+</nav>
+
+<!-- Content Row -->
+<div class="row ">
+    <div class="col-md-6">
+        <div class="card card-room-info">
+            <div class="card-body">
+                <form id="profile-form" enctype="multipart/form-data">
+                    <div class="alert alert-danger profile-error" role="alert" style="display:none"></div>
+                    {{ csrf_token()|raw }}
+                    <div class="form-group row">
+                        <div class="col-sm-4 imgUp d-block">
+                            <div class="imagePreview">
+                                <img class="img-responsive" height="100%" src=""  alt="">
+                            </div>
+                            <label class="btn btn-primary btn-upload">
+                                {{_("Upload",2)}}<input type="file" class="upload-image" name="avatar" value="Upload Photo">
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="user_name" class="col-sm-3 col-form-label">{{_("Username",2)}}</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="user_name" name="user_name" value="" placeholder="Username">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="email" class="col-sm-3 col-form-label">{{_("Email",2)}}</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="email" name="email" value="" placeholder="Email">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="password" class="col-sm-3 col-form-label">{{_("Password",2)}}</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="password" name="password" value="" placeholder="password">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="first_name" class="col-sm-3 col-form-label">{{_("First Name",2)}}</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="first_name" name="first_name" value="" placeholder="First Name">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="last_name" class="col-sm-3 col-form-label">{{_("Last Name",2)}}</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="last_name" name="last_name" value="" placeholder="Last Name">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="last_name" class="col-sm-3 col-form-label">{{_("Intro",2)}}</label>
+                        <div class="col-sm-9">
+                            <textarea name="about" id="about" rows="2" class="form-control" ></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="dob" class="col-sm-3 col-form-label">{{_("Birthday",2)}}</label>
+                        <div class="col-sm-9 date-dropdown">
+                            <input type="hidden" class="form-control dob" id="dob" name="dob" value="" placeholder="Birthday">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="sex" class="col-sm-3 col-form-label">{{_("Gender",2)}}</label>
+                        <div class="col-sm-9">
+                            <select class="form-control" id="sex" name="sex">
+                                <option value="1">{{_("Male",2)}}</option>
+                                <option value="2">{{_("Female",2)}}</option>
+                                <option value="3">{{_("Other",2)}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="country" class="col-sm-3 col-form-label">{{_("Country",2)}}</label>
+                        <div class="col-sm-9">
+                            <select class="form-control select2" id="country" name="country">
+                                <option value=""></option>
+                                {% for country_code, country_name in country_list %}
+                                    <option value="{{ country_code }}">{{ country_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="timezone" class="col-sm-3 col-form-label">{{_("Timezone",2)}}</label>
+                        <div class="col-sm-9">
+                            <select class="form-control select2" id="timezone" name="timezone">
+                                {{timezone_list|raw}}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="first_name" class="col-sm-3 col-form-label">{{_("Status",2)}}</label>
+                        <div class="col-sm-9">
+                            <select class="form-control" id="available_status" name="available_status">
+                                <option value="1">{{_("Active",2)}}</option>
+                                <option value="2">{{_("Inactive",2)}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="user_type" class="col-sm-3 col-form-label">{{_("User Type",2)}}</label>
+                        <div class="col-sm-9">
+                            <select class="form-control" id="user_type" name="user_type">
+                                <option value="1" {% if user_type == 1 %}selected{% endif %}>{{_("Administrator",2)}}</option>
+                                <option value="2" {% if user_type == 2 %}selected{% endif %}>{{_("Member",2)}}</option>
+                                <option value="3" {% if user_type == 3 %}selected{% endif %}>{{_("Guest",2)}}</option>
+                                <option value="4" {% if user_type == 4 %}selected{% endif %}>{{_("Moderator",2)}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-sm-12">
+                            <button type="button" class="btn btn-primary add-profile btn-block">{{_("Save Changes",2)}}</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

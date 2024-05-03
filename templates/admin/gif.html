@@ -1,0 +1,40 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{  url('dashboard') }}">{{_("Dashboard",2)}}</a></li>
+    <li class="breadcrumb-item">{{_("Settings",2)}}</li>
+    <li class="breadcrumb-item active" aria-current="page">{{_("GIF",2)}}</li>
+  </ol>
+</nav>
+
+<!-- Content Row -->
+<div class="row">
+    <div class="col-md-8">
+        <div class="card card-gif-settings">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    {{_("GIF Settings",2)}}
+                </h6>
+            </div>
+            <div class="card-body">
+                <form id="gif-settings">
+                    {{ csrf_token()|raw }}
+                    <div class="form-group">
+                        <label for="tenor_api_key">{{_("Tenor API Key",2)}}</label>
+                        <input type="text" class="form-control" id="tenor_api_key" name="tenor_api_key" placeholder="Tenor API Key" value="{{SETTINGS.tenor_api_key}}">
+                    </div>
+                    <div class="form-group">
+                        <label for="tenor_gif_limit">{{_("GIF Limit",2)}}</label>
+                        <input type="number" class="form-control" id="tenor_gif_limit" name="tenor_gif_limit" placeholder="GIF LIMIT" value="{{SETTINGS.tenor_gif_limit}}">
+                    </div>
+                    <button type="button" class="btn btn-primary update-settings" value="gif-settings">{{_("Update",2)}}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,68 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{  url('dashboard') }}">{{_('Dashboard',2)}}</a></li>
+    <li class="breadcrumb-item">{{_('Settings',2)}}</li>
+    <li class="breadcrumb-item active" aria-current="page">{{_('reCAPTCHA',2)}}</li>
+  </ol>
+</nav>
+<!-- Content Row -->
+<div class="row">
+    <div class="col-md-8">
+        <div class="card card-recaptcha-settings">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    {{_("reCAPTCHA Settings",2)}}
+                </h6>
+            </div>
+            <div class="card-body">
+                <form id="recaptcha-settings">
+                    {{ csrf_token()|raw }}
+
+                    <div class="form-group">
+                        <label for="enable_recaptcha">{{_("Enable reCAPTCHA",2)}}</label>
+                        <select class="form-control" id="enable_recaptcha" name="enable_recaptcha">
+                            <option value="0" {% if SETTINGS.enable_recaptcha == 0 %}selected{% endif %}>{{_("No",2)}}</option>
+                            <option value="1" {% if SETTINGS.enable_recaptcha == 1 %}selected{% endif %}>{{_("Yes",2)}}</option>
+                        </select>
+                    </div>
+                    <hr />
+                    <br />
+                    <span class="recaptcha-area" {% if SETTINGS.enable_recaptcha == 0 %}style="display:none;"{% endif %}>
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label for="recaptcha_version">{{_("Version",2)}}</label>
+                                <select class="form-control" id="recaptcha_version" name="recaptcha_version">
+                                    <option value="2" {% if SETTINGS.recaptcha_version == 2 %}selected{% endif %}>{{_("2",2)}}</option>
+                                    <option value="3" {% if SETTINGS.recaptcha_version == 3 %}selected{% endif %}>{{_("3",2)}}</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-6 recaptcha_v3_pass_score_area" {% if SETTINGS.recaptcha_version == 2 %}style="display:none;"{% endif %}>
+                                <label for="recaptcha_v3_pass_score">{{_("Version 3 Pass Score",2)}}</label>
+                                <select class="form-control" id="recaptcha_v3_pass_score" name="recaptcha_v3_pass_score">
+                                    {% for i in range(0.1, 1.0, 0.1) %}
+                                        <option value="{{ i|number_format(1) }}" {% if SETTINGS.recaptcha_v3_pass_score == i|number_format(1) %}selected{% endif %}>{{ i|number_format(1) }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="recaptcha_sitekey">{{_("Site Key",2)}}</label>
+                            <input type="text" class="form-control" id="recaptcha_sitekey" name="recaptcha_sitekey" value="{{SETTINGS.recaptcha_sitekey}}">
+                        </div>
+                        <div class="form-group">
+                            <label for="recaptcha_secretkey">{{_("Secret Key",2)}}</label>
+                            <input type="text" class="form-control" id="recaptcha_secretkey" name="recaptcha_secretkey" value="{{SETTINGS.recaptcha_secretkey}}">
+                        </div>
+                    </span>
+                    <button type="button" class="btn btn-primary update-settings" value="recaptcha-settings">{{_("Update",2)}}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

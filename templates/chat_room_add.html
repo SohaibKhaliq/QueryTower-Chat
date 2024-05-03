@@ -1,0 +1,339 @@
+<ul class="nav nav-pills mb2">
+    <li class="nav-item">
+        <a class="nav-link active" id="room-info-tab" data-toggle="pill" href="#room-info" role="tab" aria-controls="room-info" aria-selected="true"><i class="fas fa-person-booth"></i> {{_("General")}}</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="room-adv-tab" data-toggle="pill" href="#room-adv" role="tab" aria-controls="room-adv" aria-selected="false"><i class="fas fa-person-booth"></i> {{_("Advance")}}</a>
+    </li>
+
+</ul>
+<hr style="margin-bottom:5px;">
+<form id="chatroom-info" enctype="multipart/form-data">
+<div class="tab-content" id="v-pills-tabContent">
+    <div class="alert alert-danger chatroom-error" role="alert" style="display:none"></div>
+    <div class="alert alert-success chatroom-success" role="alert" style="display:none"></div>
+    <input type="hidden" name="room_id" id="room_id" value="">
+    <div class="tab-pane fade show active" id="room-info" role="tabpanel" aria-labelledby="room-info-tab">
+        <div class="card card-room-info">
+            <div class="card-body">
+                <h6>{{_("General Settings")}}</h6> <hr>
+                {{ csrf_token()|raw }}
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label" for="name">{{_('Name')}}</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" id="name" name="name" placeholder="{{_('Room Name')}}" value="">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label" for="description">{{_('Description')}}</label>
+                    <div class="col-sm-8">
+                        <textarea name="description" maxlength="500" id="description" class="form-control" rows="4" placeholder="{{_('Room Description')}}"></textarea>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label" for="slug">{{_('Slug')}}</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" id="slug" name="slug" placeholder="{{_('Room Slug')}}" value="">
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="col-sm-4 col-form-label"  for="is_protected">
+                        {{_("Password Protect")}}
+                    </label>
+                    <div class="col-sm-2">
+                        <label class="switch">
+                            <input type="checkbox" name="is_protected" id="is_protected">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <label class="col-sm-2 col-form-label pin-area" style="display:none" for="password"><span class="">Pin</span></label>
+                    <div class="col-sm-4 mb-2 pin-area" style="display:none">
+                        <input type="text" class="form-control" id="pin" name="pin" value="">
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <label class="col-sm-4 col-form-label"  for="is_visible">
+                        {{_("Visible to everyone")}}
+                    </label>
+                    <div class="col-sm-8">
+                        <label class="switch">
+                            <input type="checkbox" name="is_visible" id="is_visible" checked>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="row form-group">
+                    <input type="checkbox" style='display:none;' checked name="allowed_users[]" id="allow_admin" value="1" />
+                    {% if USER.user_type == 1 %}
+                        <label class="col-sm-4 col-form-label" for="allow_member">
+                            {{_("Allow Moderator Access")}}
+                        </label>
+                        <div class="col-sm-8">
+                            <label class="switch">
+                                <input type="checkbox" name="allowed_users[]" id="allow_moderators"  value="4" checked>
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+
+                        <label class="col-sm-4 col-form-label" for="allow_member">
+                            {{_("Allow Member Access")}}
+                        </label>
+                        <div class="col-sm-8">
+                            <label class="switch">
+                                <input type="checkbox" name="allowed_users[]" id="allow_member"  value="2">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                    {% elseif USER.user_type == 4 %}
+                        <input type="checkbox" style='display:none;' checked name="allowed_users[]" id="allow_moderators" value="4" />
+                        <label class="col-sm-4 col-form-label" for="allow_member">
+                            {{_("Allow Member Access")}}
+                        </label>
+                        <div class="col-sm-8">
+                            <label class="switch">
+                                <input type="checkbox" name="allowed_users[]" id="allow_member"  value="2">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                    {% else %}
+                        <input type="checkbox" style='display:none;' checked name="allowed_users[]" id="allow_moderators" value="4" />
+                        <input type="checkbox" style='display:none;' checked name="allowed_users[]" id="allow_member" value="2" />
+                    {% endif %}
+
+                    <label class="col-sm-4 col-form-label public-view-area" for="allow_guest_view" {% if chat_room.is_protected %}style="display:none"{% else %}style="display:block"{% endif %}>
+                        {{_("Allow Public View")}}
+                    </label>
+                    <div class="col-sm-8 public-view-area" style="display:block">
+                        <label class="switch">
+                            <input type="checkbox" name="allow_guest_view" id="allow_guest_view">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    
+                    <label class="col-sm-4 col-form-label" for="allow_guest">
+                        {{_("Allow Guest Chats")}}
+                    </label>
+                    <div class="col-sm-8">
+                        {% if SETTINGS.guest_mode %}
+                            <label class="switch">
+                                <input type="checkbox" name="allowed_users[]" id="allow_guest" value="3">
+                                <span class="slider round"></span>
+                            </label>
+                        {% else %}    
+                            <label class="switch">
+                                <input type="checkbox" disabled />
+                                <span class="slider round"></span>
+                            </label>
+                            <small>{{_("Allow Guest Mode First in Registration Settings")}}</small>
+                        {% endif %}
+                    </div>
+                </div>
+                <hr>
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label" for="room_auto_join">{{_("Auto join users to this room on the first visit")}}</label>
+                    <div class="col-sm-8">
+                        <select class="form-control" name="room_auto_join" id="room_auto_join">
+                            <option value="" >{{_("Global Setting")}}</option>
+                            <option value="0" >{{_("No")}}</option>
+                            <option value="1" >{{_("Yes")}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label" for="slug">{{_("Cover Image")}}</label>
+                    <div class="col-sm-6">
+                        <input type="file" class="form-control-file upload-cover-image" id="cover_image" name="cover_image" value="">
+                    </div>
+                    <div class="col-2">
+                        <div class="room-coverimage-preview">
+                            
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label" for="status">{{_("Status")}}</label>
+                    <div class="col-sm-8">
+                        <select class="form-control" name="status" id="status">
+                            <option value="1" >{{_("Active")}}</option>
+                            <option value="2" >{{_("Inactive")}}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer card-footer p-0 pt-3">
+                <button type="button" class="btn btn-primary update-chatroom">{{_("Submit")}}</button>
+                <button type="button" data-dismiss="modal" aria-label="Close" class="btn btn-danger ">{{_("Close")}}</button>
+            </div>
+        </div>
+    </div>
+    <div class="tab-pane fade" id="room-adv" role="tabpanel" aria-labelledby="room-adv-tab">
+        <div class="card card-room-info">
+            <div class="card-body">
+                <h6>{{_("Advance Settings")}}</h6> <hr>
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label" for="room_notice_message">{{_("Notice message",1)}}</label>
+                    <div class="col-sm-8">
+                        <textarea name="room_notice_message" id="room_notice_message" class="form-control" rows="5" cols="80"></textarea>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label" for="room_notice_class">{{_("Notice style",1)}}</label>
+                    <div class="col-sm-8">
+                        <select class="form-control" name="room_notice_class" id="room_notice_class">
+                            <option value="success">{{_("Success",1)}}</option>
+                            <option value="warning">{{_("Warning",1)}}</option>
+                            <option value="danger">{{_("Danger",1)}}</option>
+                            <option value="primary">{{_("Primary",1)}}</option>
+                            <option value="secondary">{{_("Secondary",1)}}</option>
+                            <option value="info">{{_("Info",1)}}</option>
+                            <option value="light">{{_("Light",1)}}</option>
+                            <option value="dark">{{_("Dark",1)}}</option>
+                        </select>
+                    </div>
+                </div>
+                <hr>
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label" for="show_background">
+                        {{_("Show Background")}}
+                    </label>
+                    <div class="col-sm-8">
+                        <label class="switch">
+                            <input type="checkbox" name="show_background" id="show_background" checked>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <label class="col-sm-4 col-form-label" for="slug">{{_("Background Image")}}</label>
+                    <div class="col-sm-6">
+                        <input type="file" class="form-control-file upload-background-image" id="background_image" name="background_image" value="">
+                    </div>
+                    <div class="col-2">
+                        <div class="room-bgimage-preview">
+                            <img class="img-responsive" height="100%" src="{{STATIC_URL}}/img/chatbg.png"  alt="">
+                        </div>
+                        <a href="javascript:void(0)" class="btn btn-sm btn-danger room-bgimage-remove"><i class="fas fa-times"></i></a>
+                    </div>
+                </div>
+                <hr>
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label" for="hide_chat_list">{{_("Disable user list & direct messages")}}</label>
+                    <div class="col-sm-8">
+                        <select class="form-control" name="hide_chat_list" id="hide_chat_list">
+                            <option value="" >{{_("Global Setting")}}</option>
+                            <option value="0" >{{_("No")}}</option>
+                            <option value="1" >{{_("Yes")}}</option>
+                        </select>
+                    </div>
+                </div>
+                <span class="chat-list-setting-area">
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label" for="disable_private_chats">{{_("Disable direct messages only")}}</label>
+                        <div class="col-sm-8">
+                            <select class="form-control" name="disable_private_chats" id="disable_private_chats">
+                                <option value="" >{{_("Global Setting")}}</option>
+                                <option value="0" >{{_("No")}}</option>
+                                <option value="1" >{{_("Yes")}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label" for="disable_group_chats">{{_("Disable room/group chats only")}}</label>
+                        <div class="col-sm-8">
+                            <select class="form-control" name="disable_group_chats" id="disable_group_chats">
+                                <option value="" >{{_("Global Setting")}}</option>
+                                <option value="0" >{{_("No")}}</option>
+                                <option value="1" >{{_("Yes")}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label" for="user_list_type">{{_("User list type")}}</label>
+                        <div class="col-sm-8">
+                            <select class="form-control" name="user_list_type" id="user_list_type">
+                                <option value="">{{_("Global Setting")}}</option>
+                                <option value="1">{{_("Show all users")}}</option>
+                                <option value="2">{{_("Show online users only")}}</option>
+                                <option value="3">{{_("Show authorized roles only")}}</option>
+                                <option value="4">{{_("Show linked users only")}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row user-list-auth-roles" {% if chat_room.user_list_type != 3 %}style="display:none"{% endif %}>
+                        <label class="col-sm-4 col-form-label" for="user_list_auth_roles">{{_("Users can only chat with")}}</label>
+                        <div class="col-sm-8">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <label class="switch">
+                                        <input type="checkbox" name="user_list_auth_roles[]" id="user_list_auth_admin"  value="1">
+                                        <span class="slider round"></span>
+                                    </label>
+                                    <label class="col-form-label" for="user_list_auth_admin">
+                                        {{_("Admins")}}
+                                    </label>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label class="switch">
+                                        <input type="checkbox" name="user_list_auth_roles[]" id="user_list_auth_mod"  value="4">
+                                        <span class="slider round"></span>
+                                    </label>
+                                    <label class="col-form-label" for="user_list_auth_mod">
+                                        {{_("Moderators")}}
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <label class="switch">
+                                        <input type="checkbox" name="user_list_auth_roles[]" id="user_list_auth_creator"  value="creator">
+                                        <span class="slider round"></span>
+                                    </label>
+                                    <label class="col-form-label" for="user_list_auth_creator">
+                                        {{_("Room Creator")}}
+                                    </label>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label class="switch">
+                                        <input type="checkbox" name="user_list_auth_roles[]" id="user_list_auth_rm_mod"  value="rm_mod">
+                                        <span class="slider round"></span>
+                                    </label>
+                                    <label class="col-form-label" for="user_list_auth_rm_mod">
+                                        {{_("Room Moderators")}}
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <label class="switch">
+                                        <input type="checkbox" name="user_list_auth_roles[]" id="user_list_auth_member"  value="2">
+                                        <span class="slider round"></span>
+                                    </label>
+                                    <label class="col-form-label" for="user_list_auth_member">
+                                        {{_("Members")}}
+                                    </label>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label class="switch">
+                                        <input type="checkbox" name="user_list_auth_roles[]" id="user_list_auth_guest"  value="3">
+                                        <span class="slider round"></span>
+                                    </label>
+                                    <label class="col-form-label" for="user_list_auth_guest">
+                                        {{_("Guest")}}
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </span>
+
+            </div>
+            <div class="card-footer card-footer p-0 pt-3">
+                <button type="button" class="btn btn-primary update-chatroom">{{_("Save")}}</button>
+                <button type="button" data-dismiss="modal" aria-label="Close" class="btn btn-danger ">{{_("Close")}}</button>
+            </div>
+        </div>
+    </div>
+</div>
+ </form>

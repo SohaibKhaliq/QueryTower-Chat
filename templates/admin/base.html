@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en" class="dark {{LANG['direction']}}">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>{{SETTINGS.site_name}} - Dashboard</title>
+    <link href="{{STATIC_URL}}/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link href="{{STATIC_URL}}/admin/css/styles.{{LANG['direction']?LANG['direction']:'ltr'}}.min.css" rel="stylesheet">
+    <link href="{{STATIC_URL}}/admin/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css">
+    <link href="{{STATIC_URL}}/admin/vendor/summernote/summernote.min.css" rel="stylesheet" type="text/css">
+    <link href="{{STATIC_URL}}/vendor/emojione/emojionearea.min.css" rel="stylesheet">
+    <link href="{{STATIC_URL}}/vendor/select2/select2.min.css" rel="stylesheet" />
+    <link href="{{STATIC_URL}}/admin/css/toastr.min.css" rel="stylesheet">
+    <link href="{{STATIC_URL}}/css/flag-icon.min.css" rel="stylesheet">
+    <link href="{{STATIC_URL}}/admin/css/admin.css" rel="stylesheet">
+    {% if SETTINGS.dashboard_theme != "light" %}
+    <link href="{{STATIC_URL}}/admin/css/theme-dark.css" rel="stylesheet">
+    {% endif %}
+</head>
+
+<body id="page-top">
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+        <!-- Sidebar -->
+        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+            <!-- Sidebar - Brand -->
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ url('dashboard')}}">
+                {% if SETTINGS.small_logo %}
+                    <img class="small" src="{{MEDIA_URL}}/settings/{{SETTINGS.small_logo}}">
+                {% else %}
+                    <img class="small" src="{{STATIC_URL}}/img/logo_small.png">
+                {% endif %}
+                <div class="sidebar-brand-text mx-3">{{ SETTINGS.site_name }}</div>
+            </a>
+            <!-- Nav Item - Dashboard -->
+            <li class="nav-item active">
+                <a class="nav-link" href="{{ url('dashboard') }}">
+                    <i class="fas fa-fw fa-tachometer-alt"></i>
+                    <span>{{_('Dashboard',2)}}</span>
+                </a>
+            </li>
+
+            <hr class="sidebar-divider">
+            <div class="sidebar-heading">
+                {{_('SETTINGS',2)}}
+            </div>
+
+            <!-- Nav Item - Pages Collapse Menu -->
+            <li class="nav-item">
+              <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#gen-settings" aria-expanded="true" aria-controls="collapsePages">
+                <i class="fas fa-fw fa-cog"></i>
+                <span>{{_("Settings",2)}}</span>
+              </a>
+              <div id="gen-settings" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                <div class="bg-darkgray py-2 collapse-inner rounded">
+                  <a class="collapse-item" href="{{ url('dashboard-general') }}">{{_("General",2)}}</a>
+                  <a class="collapse-item" href="{{ url('dashboard-email') }}">{{_("Email",2)}}</a>
+                  <a class="collapse-item" href="{{ url('dashboard-timing') }}">{{_("Ajax Frequency",2)}}</a>
+                  <a class="collapse-item" href="{{ url('dashboard-chatpage') }}">{{_("Chat Settings",2)}}</a>
+                  <a class="collapse-item" href="{{ url('dashboard-registration-settings') }}">{{_("Registration",2)}}</a>
+                  <a class="collapse-item" href="{{ url('dashboard-homepage') }}">{{_("Homepage",2)}}</a>
+                  <a class="collapse-item" href="{{ url('dashboard-header') }}">{{_("Header",2)}}</a>
+                  <a class="collapse-item" href="{{ url('dashboard-footer') }}">{{_("Footer",2)}}</a>
+                  <a class="collapse-item" href="{{ url('dashboard-gif') }}">{{_("GIF",2)}}</a>
+                  <a class="collapse-item" href="{{ url('dashboard-pwa') }}">{{_("PWA",2)}}</a>
+                  <a class="collapse-item" href="{{ url('dashboard-notification') }}">{{_("Notifications",2)}}</a>   
+                  <a class="collapse-item" href="{{ url('dashboard-ip-access') }}">{{_("IP Access",2)}}</a>
+                  <a class="collapse-item" href="{{ url('dashboard-cloud-storage') }}">{{_("Cloud Storage",2)}}</a>
+                  <a class="collapse-item" href="{{ url('dashboard-reactions') }}">{{_("Reactions",2)}} </a>
+                </div>
+              </div>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#apperence-settings" aria-expanded="true" aria-controls="collapsePages">
+                <i class="fas fa-fw fa-palette"></i>
+                <span>{{_("Appearance",2)}}</span>
+              </a>
+              <div id="apperence-settings" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                <div class="bg-darkgray py-2 collapse-inner rounded">
+                  <a class="collapse-item" href="{{ url('dashboard-image') }}">{{_("Images",2)}}</a>
+                  <a class="collapse-item" href="{{ url('dashboard-color') }}">{{_("Theme",2)}}</a>
+                  <a class="collapse-item" href="{{ url('dashboard-font') }}">{{_("Fonts",2)}}</a>
+                </div>
+              </div>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#content-settings" aria-expanded="true" aria-controls="collapsePages">
+                <i class="fas fa-fw fa-newspaper"></i>
+                <span>{{_("Content",2)}} </span>
+              </a>
+              <div id="content-settings" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                <div class="bg-darkgray py-2 collapse-inner rounded">
+                  <a class="collapse-item" href="{{ url('dashboard-pages') }}">{{_("Pages",2)}}</a>
+                  <a class="collapse-item" href="{{ url('dashboard-menus') }}">{{_("Menus",2)}}</a>
+                  <a class="collapse-item" href="{{ url('dashboard-policy') }}">{{_("Policy pages",2)}}</a>
+                  <a class="collapse-item" href="{{ url('dashboard-about') }}">{{_("About page",2)}}</a>
+                  <a class="collapse-item" href="{{ url('dashboard-contact') }}">{{_("Contact page",2)}}</a>
+                </div>
+              </div>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#spam-control" aria-expanded="true" aria-controls="collapsePages">
+                <i class="fas fa-user-secret"></i>
+                <span>{{_("Spam Control",2)}}</span>
+              </a>
+              <div id="spam-control" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                <div class="bg-darkgray py-2 collapse-inner rounded">
+                  <a class="collapse-item" href="{{ url('dashboard-domain-filter') }}">{{_("Domain Filter",2)}}</a>
+                  <a class="collapse-item" href="{{ url('dashboard-flood-control') }}">{{_("Flood Control",2)}}</a>
+                  <a class="collapse-item" href="{{ url('dashboard-profanity') }}">{{_("Profanity Filter",2)}}</a>
+                  <a class="collapse-item" href="{{ url('dashboard-recaptcha') }}">{{_("reCAPTCHA",2)}}</a>
+                </div>
+              </div>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url('dashboard-chatroom-list') }}" >
+                <i class="fas fa-fw fa-comments"></i>
+                <span>{{_("Chat Rooms",2)}}</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url('dashboard-video-calling') }}" >
+                <i class="fas fa-fw fa-video"></i>
+                <span>{{_("Video Calling",2)}}</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#users" aria-expanded="true" aria-controls="collapsePages">
+                <i class="fas fa-fw fa-users"></i>
+                <span>{{_("Users",2)}}</span>
+              </a>
+              <div id="users" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                <div class="bg-darkgray py-2 collapse-inner rounded">
+                  <a class="collapse-item" href="{{ url('dashboard-user-list') }}">{{_("Members",2)}}</a>
+                  <a class="collapse-item" href="{{ url('dashboard-guest-list') }}">{{_("Guests",2)}}</a>
+                  <a class="collapse-item" href="{{ url('dashboard-badges') }}">{{_("Member Badges",2)}} </a>
+                </div>
+              </div>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url('dashboard-flaged-content') }}" >
+                <i class="fas fa-flag"></i>
+                <span>{{_("Flaged Content")}}</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url('dashboard-social-login') }}" >
+                <i class="fas fa-share-alt"></i>
+                <span>{{_("Social Login",2)}}</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url('dashboard-radio') }}" >
+                <i class="fas fa-play-circle"></i>
+                <span>{{_("Radio",2)}}</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url('dashboard-languages') }}" >
+                <i class="fas fa-fw fa-language"></i>
+                <span>{{_("Language",2)}}</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url('dashboard-advertisements') }}" >
+                <i class="fas fa-fw fa-ad"></i>
+                <span>{{_("Advertisements",2)}}</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#reports" aria-expanded="true" aria-controls="collapsePages">
+                <i class="far fa-chart-bar"></i>
+                <span>{{_("Reports",2)}}</span>
+              </a>
+              <div id="reports" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                <div class="bg-darkgray py-2 collapse-inner rounded">
+                  <a class="collapse-item" href="{{ url('dashboard-ip-logs') }}">{{_("IP Logs",2)}}</a>
+                </div>
+              </div>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url('dashboard-sso') }}" >
+                <i class="fas fa-people-arrows"></i>
+                <span>{{_("Integrations - SSO",2)}}</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url('dashboard-maintenance') }}" >
+                <i class="fas fa-wrench"></i>
+                <span>{{_("Maintenance",2)}}</span>
+              </a>
+            </li>
+
+            <hr class="sidebar-divider d-none d-md-block">
+
+            <div class="text-center d-none d-md-inline">
+                <button class="rounded-circle border-0" id="sidebarToggle"></button>
+            </div>
+
+        </ul>
+        <!-- End of Sidebar -->
+
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+            <!-- Main Content -->
+            <div id="content">
+                <!-- Topbar -->
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                    <!-- Sidebar Toggle (Topbar) -->
+                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                        <i class="fa fa-bars"></i>
+                    </button>
+
+                    <!-- Topbar Navbar -->
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item dropdown no-arrow mx-1">
+                            <a class="nav-link " target="_blank" href="{{ url('index') }}"  role="button" >
+                                <i class="ml-2 fas fa-external-link-alt"></i>
+                            </a>
+                        </li>
+                        <div class="topbar-divider d-none d-sm-block"></div>
+                        <!-- Nav Item - User Information -->
+                        <li class="nav-item dropdown no-arrow">
+                            <div class="dropdown lang-selector ml-auto nav-link ">
+                                <button class="btn btn-sm btn-lang dropdown-toggle" type="button" id="langSelector" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <span id="selected-lang-toggle"> <span class="flag-icon flag-icon-{{ LANG['country'] }}"></span> {{ LANG['name'] }} </span>
+                                </button>
+                                <div class="dropdown-menu scrollable-menu" aria-labelledby="langSelector">
+                                    {% for select_lang in lang_list %}
+                                        <a class="dropdown-item {% if select_lang.code == LANG %}selected-lang{%endif%}" href="{{ url('setlang', {'reqlang':select_lang.code}) }}">
+                                            <span class="flag-icon flag-icon-{{select_lang.country}}"></span> {{select_lang.name}}
+                                        </a>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown no-arrow">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-user mr-2"></i>
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ USER.first_name }}</span>
+                            </a>
+                            <!-- Dropdown - User Information -->
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                                <a class="dropdown-item" href="{{ url('logout') }}" >
+                                    <i class="fas fa-power-off fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    {{_("Logout",2)}}
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                </nav>
+                <!-- End of Topbar -->
+                <!-- Begin Page Content -->
+                <div class="container-fluid mb-4">
+                    <div class="alert alert-danger settings-error" role="alert" style="display:none"></div>
+                    <div class="alert alert-success settings-success" role="alert" style="display:none"></div>
+                    {% block content %}{% endblock %}
+                </div>
+                <!-- /.container-fluid -->
+            </div>
+            <!-- End of Main Content -->
+        </div>
+        <!-- End of Content Wrapper -->
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!-- Logout Modal-->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">{{_("Ready to Leave?",2)}}</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">{{_("Select Logout below if you are ready to end your current session.",2)}}</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">{{_("Cancel",2)}}</button>
+                    <a class="btn btn-primary" href="login.html">{{_("Logout",2)}}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="{{STATIC_URL}}/admin/vendor/jquery/jquery.min.js"></script>
+    <script src="{{STATIC_URL}}/admin/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="{{STATIC_URL}}/admin/vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="{{STATIC_URL}}/admin/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="{{STATIC_URL}}/vendor/emojione/emojionearea.min.js"></script>
+    <script src="{{STATIC_URL}}/admin/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+    <script src="{{STATIC_URL}}/admin/vendor/dropdown-datepicker/js/jquery.date-dropdowns.min.js"></script>
+    <script src="{{STATIC_URL}}/admin/vendor/summernote/summernote.min.js"></script>
+    <script src="{{STATIC_URL}}/js/moment.min.js"></script>
+    <script src="{{STATIC_URL}}/js/moment-timezone-with-data.min.js"></script>
+    <script src="{{STATIC_URL}}/js/loadingoverlay.min.js" ></script>
+    <script src="{{STATIC_URL}}/vendor/lazyload/jquery.lazy.min.js"></script>
+    <script src="{{STATIC_URL}}/vendor/select2/select2.min.js"></script>
+    <script src="{{STATIC_URL}}/admin/js/toastr.min.js" ></script>
+    <script src="{{STATIC_URL}}/admin/js/scripts.js"></script>
+    <script src="{{ url('dashboard-admin_js') }}"></script>
+    {% block scripts %} {% endblock %}
+
+</body>
+
+</html>

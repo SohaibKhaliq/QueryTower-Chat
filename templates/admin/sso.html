@@ -1,0 +1,75 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{  url('dashboard') }}">{{_('Dashboard',2)}}</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{{_('SSO',2)}}</li>
+  </ol>
+</nav>
+
+<!-- Content Row -->
+<div class="row">
+    <div class="col-md-8">
+        <div class="card card-sso-settings">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    {{_('Single sign-on - SSO',2)}} 
+                </h6>
+            </div>
+            <div class="card-body">
+                <form id="sso-settings">
+                    {{ csrf_token()|raw }}
+                    <div class="form-group">
+                        <label for="sso_enabled">{{_('Enable SSO Integration',2)}}</label>
+                        <select class="form-control" id="sso_enabled" name="sso_enabled">
+                            <option value="0" {% if SETTINGS.sso_enabled == 0 %}selected{% endif %}>{{_('No',2)}}</option>
+                            <option value="1" {% if SETTINGS.sso_enabled == 1 %}selected{% endif %}>{{_('Yes',2)}}</option>
+                        </select>
+                    </div>
+                    <span class="sso-setting-area" {% if SETTINGS.sso_enabled == 0 %}style="display:none;"{% endif %}>
+                        <div class="form-group">
+                            <label for="sso_allowed_orgins">{{_('Allowed domains to connect with ChatNet',2)}}</label>
+                            <input type="text" class="form-control" id="sso_allowed_orgins" name="sso_allowed_orgins" value="{{SETTINGS.sso_allowed_orgins}}">
+                            <small id="allowed_orgins_help" class="form-text text-muted">
+                                {{_('Allowed domains / origins must be comma separated list without ending slashes. Ex: http://mywpsite.com, http://abc.com',2)}}
+                            </small>
+                        </div>
+                        <div class="form-group">
+                            <label for="sso_home_url">{{_('Parent website homepage URL',2)}}</label>
+                            <input type="text" class="form-control" id="sso_home_url" name="sso_home_url" value="{{SETTINGS.sso_home_url}}">
+                            <small class="form-text text-muted">
+                                {{_('Enter your main website URL here, Could be WordPress or any other script',2)}}
+                            </small>
+                        </div>
+                        <div class="form-group">
+                            <label for="sso_login_url">{{_('Parent website login URL',2)}}</label>
+                            <input type="text" class="form-control" id="sso_login_url" name="sso_login_url" value="{{SETTINGS.sso_login_url}}">
+                            <small class="form-text text-muted">
+                                {{_('If user clicked on a login/register link in ChatNet they will be redirected to this URL',2)}}
+                            </small>
+                        </div>
+                        <div class="form-group">
+                            <label for="sso_logout_url">{{_('Parent website logout URL',2)}}</label>
+                            <input type="text" class="form-control" id="sso_logout_url" name="sso_logout_url" value="{{SETTINGS.sso_logout_url}}">
+                            <small class="form-text text-muted">
+                                {{_('If user clicked on a logout link in ChatNet they will be redirected to this URL',2)}}
+                            </small>
+                        </div>
+                        <div class="form-group">
+                            <label for="sso_allow_profile_edit">{{_('Enable users to edit their profile in ChatNet',2)}}</label>
+                            <select class="form-control" id="sso_allow_profile_edit" name="sso_allow_profile_edit">
+                                <option value="0" {% if SETTINGS.sso_allow_profile_edit == 0 %}selected{% endif %}>{{_('No',2)}}</option>
+                                <option value="1" {% if SETTINGS.sso_allow_profile_edit == 1 %}selected{% endif %}>{{_('Yes',2)}}</option>
+                            </select>
+                        </div>
+                    </span>
+                    <button type="button" class="btn btn-primary update-settings" value="sso-settings">{{_('Update',2)}}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

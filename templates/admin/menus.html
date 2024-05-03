@@ -1,0 +1,133 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{  url('dashboard') }}">{{_("Dashboard",2)}}</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{{_("Menus",2)}}</li>
+  </ol>
+</nav>
+
+<!-- Content Row -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-menu-settings">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    {{_('Menu Settings',2)}}
+                </h6>
+            </div>
+            <div class="card-body">
+                <form id="menu-settings" enctype='multipart/form-data'>
+                    {{ csrf_token()|raw }}
+
+                    <div class="form-group">
+                        <label for="custom_menus">{{_('Enable Custom Menus',2)}}</label>
+                        <select class="form-control col-md-6" id="custom_menus" name="custom_menus">
+                            <option value="0" {% if SETTINGS.custom_menus == 0 %}selected{% endif %}>{{_('No',2)}}</option>
+                            <option value="1" {% if SETTINGS.custom_menus == 1 %}selected{% endif %}>{{_('Yes',2)}}</option>
+                        </select>
+                    </div>
+                    <div class="enable-menu-area table-responsive" {% if SETTINGS.custom_menus == 0 %}style="display:none;"{% endif %}>
+                        <div class="row">
+                            <div class="col">
+                                <div class="text-right mb-2">
+                                    <a href="javascript:void(0)" class="btn btn-primary btn-xs add-new-menu">{{_("Add New Menu",2)}}</a>
+                                </div>
+                            </div>
+                        </div>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>{{_("Title",2)}}</th>
+                                    <th>{{_("Permalink",2)}}</th>
+                                    <th style="width:100px">{{_("Order",2)}}</th>
+                                    <th>{{_("Icon CSS Classes",2)}}</th>
+                                    <th>{{_("Menu CSS Classes",2)}}</th>
+                                    <th>{{_("Target",2)}}</th>
+                                    <th>{{_("Members Only",2)}}</th>
+                                    <th>{{_("Status",2)}}</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody class="menu-list">
+                                <tr class="hidden-row">
+                                    <td>
+                                        <input type="hidden" id="id" name="id" value="" />
+                                        <input class="form-control" maxlength="30" type="text" id="title" name="title" value="" placeholder="{{_('Title',2)}}"/>
+                                    </td>
+                                    <td><input class="form-control" maxlength="200" type="url" id="permalink" name="permalink" value="" placeholder="{{_('Permalink',2)}}"></td>
+                                    <td><input class="form-control" type="number" id="menu_order" name="menu_order" value="" placeholder="{{_('order',2)}}"></td>
+                                    <td><input class="form-control" maxlength="50" type="text" id="icon_class" name="icon_class" value="" placeholder="{{_('Icon Classes',2)}}"></td>
+                                    <td><input class="form-control" maxlength="50" type="text" id="css_class" name="css_class" value="" placeholder="{{_('Menu Classes',2)}}"></td>
+                                    <td>
+                                        <select class="form-control" id="target" name="target">
+                                            <option value="1">{{_('Same Window',2)}}</option>
+                                            <option value="0">{{_('New Window',2)}}</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <select class="form-control" id="members_only" name="members_only">
+                                            <option value="0">{{_('No',2)}}</option>
+                                            <option value="1">{{_('Yes',2)}}</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <select class="form-control" id="status" name="status">
+                                            <option value="1">{{_('Active',2)}}</option>
+                                            <option value="0">{{_('Inactive',2)}}</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <a class="btn btn-danger btn-xs delete-menu" href="javascript:void(0)" title="{{_('Delete Menu',2)}}">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% for menus in menus %}
+                                    <tr>
+                                        <td>
+                                            <input type="hidden" id="id" name="id" value="{{ menus.id }}" />
+                                            <input class="form-control" maxlength="30" type="text" id="title" name="title" value="{{ menus.title|default('') }}" placeholder="{{_('Title',2)}}" />
+                                        </td>
+                                        <td><input class="form-control" maxlength="200" type="url" id='permalink' name="permalink" value="{{ menus.permalink|default('') }}" placeholder="{{_('Permalink',2)}}"></td>
+                                        <td><input class="form-control" type="number" id='menu_order' name="menu_order" value="{{ menus.menu_order }}" placeholder="{{_('Order',2)}}"></td>
+                                        <td><input class="form-control" maxlength="50" type="text" id='icon_class' name="css_class" value="{{ menus.icon_class|default('') }}" placeholder="{{_('Icon Classes',2)}}"></td>
+                                        <td><input class="form-control" maxlength="50" type="text" id='css_class' name="css_class" value="{{ menus.css_class|default('') }}" placeholder="{{_('Menu Classes',2)}}"></td>
+                                        <td>
+                                            <select class="form-control" id="target" name="target">
+                                                <option value="_self" {% if menus.target == '_self' %}selected{% endif %}>{{_('Same Window',2)}}</option>
+                                                <option value="_blank" {% if menus.target == '_blank' %}selected{% endif %}>{{_('New Window',2)}}</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <select class="form-control" id="members_only" name="members_only">
+                                                <option value="0" {% if menus.members_only == '0' %}selected{% endif %}>{{_('No',2)}}</option>
+                                                <option value="1" {% if menus.members_only == '1' %}selected{% endif %}>{{_('Yes',2)}}</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <select class="form-control" id="status" name="status">
+                                                <option value="1" {% if menus.status == '1' %}selected{% endif %}>{{_('Active',2)}}</option>
+                                                <option value="0" {% if menus.status == '0' %}selected{% endif %}>{{_('Inactive',2)}}</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <a class="btn btn-danger btn-xs delete-menu" href="javascript:void(0)" title="{{_('Delete Menu',2)}}">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <button type="button" class="btn btn-primary update-menu" value="menu-settings">{{_('Update',2)}}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

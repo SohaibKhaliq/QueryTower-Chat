@@ -1,0 +1,213 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{  url('dashboard') }}">{{_("Dashboard",2)}}</a></li>
+    <li class="breadcrumb-item">{{_("Settings",2)}}</li>
+    <li class="breadcrumb-item active" aria-current="page">{{_("Images",2)}}</li>
+  </ol>
+</nav>
+
+<!-- Content Row -->
+<div class="row">
+    <div class="col-md-8">
+        <div class="card card-image-settings">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    {{_("Image Settings",2)}}
+                </h6>
+            </div>
+            <div class="card-body">
+                <form id="image-settings" enctype="multipart/form-data">
+                    {{ csrf_token()|raw }}
+                    <div class="row">
+                        <div class="form-group col-9">
+                            <label for="logo">{{_("Dark Theme Logo",2)}}</label>
+                            <input type="file" class="form-control-file upload-setting-image" id="logo" name="logo" value="{{SETTINGS.logo}}">
+                            <small><b>{{_("Optimim Size",2)}} -</b> Width:130px & Height:30px </small>
+                        </div>
+                        <div class="col-3 d-flex align-self-center justify-content-center">
+                            <div class="setting-image-preview" style="height:{{IMAGE_SIZE.logo.height}}px; width:{{IMAGE_SIZE.logo.width}}px">
+                                {% if SETTINGS.logo %}
+                                    <img class="img-fluid" height="100%" src="{{MEDIA_URL}}/settings/{{SETTINGS.logo}}"  alt="">
+                                    <button class="remove-setting" data-setting="logo"><i class="fa fa-times"></i></button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-9">
+                            <label for="light_theme_logo">{{_("Light Theme Logo",2)}}</label>
+                            <input type="file" class="form-control-file upload-setting-image" id="light_theme_logo" name="light_theme_logo" value="{{SETTINGS.light_theme_logo}}">
+                            <small><b>{{_("Optimim Size",2)}} -</b> Width:130px & Height:30px </small>
+                        </div>
+                        <div class="col-3 d-flex align-self-center justify-content-center">
+                            <div class="setting-image-preview" style="height:{{IMAGE_SIZE.logo.height}}px; width:{{IMAGE_SIZE.logo.width}}px">
+                                {% if SETTINGS.light_theme_logo %}
+                                    <img class="img-fluid" height="100%" src="{{MEDIA_URL}}/settings/{{SETTINGS.light_theme_logo}}"  alt="">
+                                    <button class="remove-setting" data-setting="light_theme_logo"><i class="fa fa-times"></i></button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group col-9">
+                            <label for="small_logo">{{_("Dark Theme Small Logo",2)}}</label>
+                            <input type="file" class="form-control-file upload-setting-image" id="small_logo" name="small_logo" value="{{SETTINGS.small_logo}}">
+                            <small><b>{{_("Optimim Size",2)}} -</b> Width:50px & Height:50px </small>
+                        </div>
+                        <div class="col-3 d-flex align-self-center justify-content-center">
+                            <div class="setting-image-preview " style="height:{{IMAGE_SIZE.small_logo.height}}px; width:{{IMAGE_SIZE.small_logo.width}}px">
+                                {% if SETTINGS.small_logo %}
+                                    <img class="img-fluid" height="100%" src="{{MEDIA_URL}}/settings/{{SETTINGS.small_logo}}"  alt="">
+                                    <button class="remove-setting" data-setting="small_logo"><i class="fa fa-times"></i></button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group col-9">
+                            <label for="light_theme_small_logo">{{_("Light Theme Small Logo",2)}}</label>
+                            <input type="file" class="form-control-file upload-setting-image" id="light_theme_small_logo" name="light_theme_small_logo" value="{{SETTINGS.light_theme_small_logo}}">
+                            <small><b>{{_("Optimim Size",2)}} -</b> Width:50px & Height:50px </small>
+                        </div>
+                        <div class="col-3 d-flex align-self-center justify-content-center">
+                            <div class="setting-image-preview " style="height:{{IMAGE_SIZE.small_logo.height}}px; width:{{IMAGE_SIZE.small_logo.width}}px">
+                                {% if SETTINGS.light_theme_small_logo %}
+                                    <img class="img-fluid" height="100%" src="{{MEDIA_URL}}/settings/{{SETTINGS.light_theme_small_logo}}"  alt="">
+                                    <button class="remove-setting" data-setting="light_theme_small_logo"><i class="fa fa-times"></i></button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-9">
+                            <label for="favicon">{{_("Favicon",2)}}</label>
+                            <input type="file" class="form-control-file upload-setting-image" id="favicon" name="favicon" value="{{SETTINGS.favicon}}">
+                            <small><b>{{_("Optimim Size",2)}} -</b> Width:16px & Height:16px </small>
+                        </div>
+                        <div class="col-3 d-flex align-self-center justify-content-center">
+                            <div class="setting-image-preview" style="height:{{IMAGE_SIZE.favicon.height}}px; width:{{IMAGE_SIZE.favicon.width}}px">
+                                {% if SETTINGS.favicon %}
+                                    <img class="img-fluid" height="100%" src="{{MEDIA_URL}}/settings/{{SETTINGS.favicon}}"  alt="">
+                                    <button class="remove-setting" data-setting="favicon"><i class="fa fa-times"></i></button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-9">
+                            <label for="homepage_banner">{{_("Home Page Banner",2)}}</label>
+                            <input type="file" class="form-control-file upload-setting-image" id="homepage_banner" name="homepage_banner" value="{{SETTINGS.homepage_banner}}">
+                            <small><b>{{_("Optimim Size",2)}} -</b> Width:1366px & Height:556px </small>
+                        </div>
+                        <div class="col-3 d-flex align-self-center justify-content-center">
+                            <div class="setting-image-preview">
+                                {% if SETTINGS.homepage_banner %}
+                                    <img class="img-fluid" height="100%" src="{{MEDIA_URL}}/settings/{{SETTINGS.homepage_banner}}"  alt="">
+                                    <button class="remove-setting" data-setting="homepage_banner"><i class="fa fa-times"></i></button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-9">
+                            <label for="home_page_image">{{_("Home Page Image",2)}}</label>
+                            <input type="file" class="form-control-file upload-setting-image" id="home_page_image" name="home_page_image" value="{{SETTINGS.home_page_image}}">
+                            <small><b>{{_("Optimim Size",2)}} -</b> Width:510px & Height:345px </small>
+                        </div>
+                        <div class="col-3 d-flex align-self-center justify-content-center">
+                            <div class="setting-image-preview">
+                                {% if SETTINGS.home_page_image %}
+                                    <img class="img-fluid" height="100%" src="{{MEDIA_URL}}/settings/{{SETTINGS.home_page_image}}"  alt="">
+                                    <button class="remove-setting" data-setting="home_page_image"><i class="fa fa-times"></i></button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-9">
+                            <label for="login_page_image">{{_("Login Page Image",2)}}</label>
+                            <input type="file" class="form-control-file upload-setting-image" id="login_page_image" name="login_page_image" value="{{SETTINGS.login_page_image}}">
+                            <small><b>{{_("Optimim Size",2)}} -</b> Width:440px & Height:500px </small>
+                        </div>
+                        <div class="col-3 d-flex align-self-center justify-content-center">
+                            <div class="setting-image-preview">
+                                {% if SETTINGS.login_page_image %}
+                                    <img class="img-fluid" height="100%" src="{{MEDIA_URL}}/settings/{{SETTINGS.login_page_image}}"  alt="">
+                                    <button class="remove-setting" data-setting="login_page_image"><i class="fa fa-times"></i></button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-9">
+                            <label for="register_page_image">{{_("Register Page Image",2)}}</label>
+                            <input type="file" class="form-control-file upload-setting-image" id="register_page_image" name="register_page_image" value="{{SETTINGS.register_page_image}}">
+                            <small><b>{{_("Optimim Size",2)}} -</b> Width:440px & Height:500px </small>
+                        </div>
+                        <div class="col-3 d-flex align-self-center justify-content-center">
+                            <div class="setting-image-preview">
+                                {% if SETTINGS.register_page_image %}
+                                    <img class="img-fluid" height="100%" src="{{MEDIA_URL}}/settings/{{SETTINGS.register_page_image}}"  alt="">
+                                    <button class="remove-setting" data-setting="register_page_image"><i class="fa fa-times"></i></button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-9">
+                            <label for="forget_password_page_image">{{_("Forget Password Page Image",2)}}</label>
+                            <input type="file" class="form-control-file upload-setting-image" id="forget_password_page_image" name="forget_password_page_image" value="{{SETTINGS.forget_password_page_image}}">
+                            <small><b>{{_("Optimim Size",2)}} -</b> Width:440px & Height:500px </small>
+                        </div>
+                        <div class="col-3 d-flex align-self-center justify-content-center">
+                            <div class="setting-image-preview">
+                                {% if SETTINGS.forget_password_page_image %}
+                                    <img class="img-fluid" height="100%" src="{{MEDIA_URL}}/settings/{{SETTINGS.forget_password_page_image}}"  alt="">
+                                    <button class="remove-setting" data-setting="forget_password_page_image"><i class="fa fa-times"></i></button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-9">
+                            <label for="default_ogimage">{{_("OG image",2)}}</label>
+                            <input type="file" class="form-control-file upload-setting-image" id="default_ogimage" name="default_ogimage" value="{{SETTINGS.default_ogimage}}">
+                        </div>
+                        <div class="col-3 d-flex align-self-center justify-content-center">
+                            <div class="setting-image-preview">
+                                {% if SETTINGS.default_ogimage %}
+                                    <img class="img-fluid" height="100%" src="{{MEDIA_URL}}/settings/{{SETTINGS.default_ogimage}}"  alt="">
+                                    <button class="remove-setting" data-setting="default_ogimage"><i class="fa fa-times"></i></button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-9">
+                            <label for="boxed_bg">{{_("Chat Page Background for Boxed Layout",2)}}</label>
+                            <input type="file" class="form-control-file upload-setting-image" id="boxed_bg" name="boxed_bg" value="{{SETTINGS.boxed_bg}}">
+                        </div>
+                        <div class="col-3 d-flex align-self-center justify-content-center">
+                            <div class="setting-image-preview">
+                                {% if SETTINGS.boxed_bg %}
+                                    <img class="img-fluid" height="100%" src="{{MEDIA_URL}}/settings/{{SETTINGS.boxed_bg}}"  alt="">
+                                    <button class="remove-setting" data-setting="boxed_bg"><i class="fa fa-times"></i></button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn btn-primary update-settings" value="image-settings">{{_("Update",2)}}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

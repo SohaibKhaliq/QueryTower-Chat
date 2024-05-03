@@ -1,0 +1,70 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{  url('dashboard') }}">{{_("Dashboard",2)}}</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{{_("Maintenance",2)}}</li>
+  </ol>
+</nav>
+
+<!-- Content Row -->
+<div class="row">
+    <div class="col-md-8">
+        <div class="card card-maintainance-settings">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    {{_("Maintenance Settings",2)}} <span class="badge badge-danger">Experimental</span>
+                </h6>
+            </div>
+            <div class="card-body">
+
+                <div class="alert alert-info">
+                    {{_("Disable each cron by setting value as 0",2)}}
+                </div>
+
+                <form id="maintainance-settings">
+                    {{ csrf_token()|raw }}
+
+                    <div class="form-group ">
+                        <label for="guest_inactive_hours">{{_("Delete all guest accounts after",2)}}</label>
+                        <div class="input-group">
+                            <input type="number" class="form-control" name="guest_inactive_hours" id="guest_inactive_hours" value="{{SETTINGS.guest_inactive_hours|default('0')}}">
+                            <div class="input-group-append">
+                                <span class="input-group-text">hours</span>
+                            </div>
+                        </div>
+                        <small>{{_("In order to this to work, please set a cron job to run this URL: ",2)}} {{ url('cron-delete-guests') }}</small>
+                    </div>
+
+                    <div class="form-group ">
+                        <label for="delete_group_chat_hours">{{_("Delete all group chats after",2)}}</label>
+                        <div class="input-group">
+                            <input type="number" class="form-control" name="delete_group_chat_hours" id="delete_group_chat_hours" value="{{SETTINGS.delete_group_chat_hours|default('0')}}">
+                            <div class="input-group-append">
+                                <span class="input-group-text">hours</span>
+                            </div>
+                        </div>
+                        <small>{{_("In order to this to work, please set a cron job to run this URL: ",2)}} {{ url('cron-delete-group-chats') }}</small>
+                    </div>
+
+                    <div class="form-group ">
+                        <label for="delete_private_chat_hours">{{_("Delete all private chats after",2)}}</label>
+                        <div class="input-group">
+                            <input type="number" class="form-control" name="delete_private_chat_hours" id="delete_private_chat_hours" value="{{SETTINGS.delete_private_chat_hours|default('0')}}">
+                            <div class="input-group-append">
+                                <span class="input-group-text">hours</span>
+                            </div>
+                        </div>
+                        <small>{{_("In order to this to work, please set a cron job to run this URL: ",2)}} {{ url('cron-delete-private-chats') }}</small>
+                    </div>
+
+                    <button type="button" class="btn btn-primary update-settings" value="maintainance-settings">{{_("Update",2)}}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

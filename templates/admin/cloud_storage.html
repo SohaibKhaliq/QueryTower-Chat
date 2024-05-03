@@ -1,0 +1,102 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{  url('dashboard') }}">{{_('Dashboard',2)}}</a></li>
+    <li class="breadcrumb-item">{{_('Settings',2)}}</li>
+    <li class="breadcrumb-item active" aria-current="page">{{_('Cloud Storage',2)}}</li>
+  </ol>
+</nav>
+<!-- Content Row -->
+<div class="row">
+    <div class="col-md-8">
+        <div class="card card-cloud-storage-settings">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    {{_("Cloud Storage",2)}}
+                </h6>
+            </div>
+            <div class="card-body">
+                <form id="cloud-storage-settings">
+                    {{ csrf_token()|raw }}
+
+                    <div class="form-group">
+                        <label for="cloud_storage">{{_("Enable Cloud Storage",2)}}</label>
+                        <select class="form-control" id="cloud_storage" name="cloud_storage">
+                            <option value="0" {% if SETTINGS.cloud_storage == 0 %}selected{% endif %}>{{_("No",2)}}</option>
+                            <option value="1" {% if SETTINGS.cloud_storage == 1 %}selected{% endif %}>{{_("Yes",2)}}</option>
+                        </select>
+                    </div>
+                    <hr />
+                    <span class="cloud-storage-area" {% if SETTINGS.cloud_storage == 0 %}style="display:none;"{% endif %}>
+                        <div class="form-group">
+                            <label for="cloud_storage_endpoint">{{_("Cloud Storage Type",2)}}</label>
+                            <select class="form-control" id="cloud_storage_type" name="cloud_storage_type">
+                                <option value="aws" {% if SETTINGS.cloud_storage_type == 'aws' %}selected{% endif %}>{{_("AWS S3",2)}}</option>
+                                <option value="gcs" {% if SETTINGS.cloud_storage_type == 'gcs' %}selected{% endif %}>{{_("Google Cloud Storage",2)}}</option>
+                                <option value="wasabi" {% if SETTINGS.cloud_storage_type == 'wasabi' %}selected{% endif %}>{{_("Wasabi",2)}}</option>
+                                <option value="backblaze" {% if SETTINGS.cloud_storage_type == 'backblaze' %}selected{% endif %}>{{_("Backblaze",2)}}</option>
+                                <option value="other" {% if SETTINGS.cloud_storage_type == 'other' %}selected{% endif %}>{{_("Other Storage",2)}}</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="cloud_storage_endpoint">{{_("Cloud Storage Endpoint",2)}}</label>
+                            <input type="text" class="form-control" id="cloud_storage_endpoint" name="cloud_storage_endpoint" value="{{SETTINGS.cloud_storage_endpoint}}">
+                            <small id="domains_list_help" class="form-text text-muted">
+                                {{_('Ex: https://s3.us-west-1.wasabisys.com',2)}}
+                            </small>
+                        </div>
+                        <div class="form-group">
+                            <label for="cloud_storage_region">{{_("Cloud Storage Region",2)}}</label>
+                            <input type="text" class="form-control" id="cloud_storage_region" name="cloud_storage_region" value="{{SETTINGS.cloud_storage_region}}">
+                            <small id="domains_list_help" class="form-text text-muted">
+                                {{_('Ex: us-west-1',2)}}
+                            </small>
+                        </div>
+                        <div class="form-group">
+                            <label for="cloud_storage_key">{{_("Cloud Storage Access Key",2)}}</label>
+                            <input type="text" class="form-control" id="cloud_storage_key" name="cloud_storage_key" value="{{SETTINGS.cloud_storage_key}}">
+                            <small id="domains_list_help" class="form-text text-muted">
+                                {{_('Ex: E7PLABC123IIGESALLX2m',2)}}
+                            </small>
+                        </div>
+                        <div class="form-group">
+                            <label for="cloud_storage_secret">{{_("Cloud Storage Secret Key",2)}}</label>
+                            <input type="text" class="form-control" id="cloud_storage_secret" name="cloud_storage_secret" value="{{SETTINGS.cloud_storage_secret}}">
+                            <small class="form-text text-muted">
+                                {{_('Ex: WIRTTgzy3QStVHY5r4VogD0SuABCDEF5aPlJz5z',2)}}
+                            </small>
+                        </div>
+                        <div class="form-group">
+                            <label for="cloud_storage_bucket">{{_("Cloud Storage Bucket Name",2)}}</label>
+                            <input type="text" class="form-control" id="cloud_storage_bucket" name="cloud_storage_bucket" value="{{SETTINGS.cloud_storage_bucket}}">
+                            <small class="form-text text-muted">
+                                {{_('Ex: chatnetmedia',2)}}
+                            </small>
+                        </div>
+                        <div class="form-group">
+                            <label for="cloud_storage_url">{{_("Cloud Storage Access URL",2)}}</label>
+                            <input type="text" class="form-control" id="cloud_storage_url" name="cloud_storage_url" value="{{SETTINGS.cloud_storage_url}}">
+                            <small class="form-text text-muted">
+                                {{_('URL must be without ending slash. Ex: https://s3.wasabisys.com/chatnetmedia',2)}}
+                            </small>
+                        </div>
+                        <div class="form-group">
+                            <label for="cloud_storage_ssl_verify">{{_("Cloud Storage SSL Verification",2)}}</label>
+                            <select class="form-control" id="cloud_storage_ssl_verify" name="cloud_storage_ssl_verify">
+                                <option value="1" {% if SETTINGS.cloud_storage_ssl_verify == 1 %}selected{% endif %}>{{_("Yes",2)}}</option>
+                                <option value="0" {% if SETTINGS.cloud_storage_ssl_verify == 0 %}selected{% endif %}>{{_("No",2)}}</option>
+                            </select>
+                        </div>
+
+                    </span>
+                    <button type="button" class="btn btn-primary update-settings" value="cloud-storage-settings">{{_("Update",2)}}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

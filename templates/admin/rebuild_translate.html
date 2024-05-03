@@ -1,0 +1,29 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+
+<!-- Content Row -->
+<div class="row">
+    <div class="col-md-8">
+        <div class="card card-policy-settings">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    {{_('Collect New Translatable Phrases',2)}}
+                </h6>
+            </div>
+            <div class="card-body">
+                {% if updated_terms %}
+                <ul>
+                    {% for updated_term in updated_terms %}
+                        <li>{{ updated_term }}</li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                    {{_('All terms are up to date',2)}}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

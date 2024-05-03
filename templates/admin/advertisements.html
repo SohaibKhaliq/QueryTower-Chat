@@ -1,0 +1,75 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{  url('dashboard') }}">{{_("Dashboard",2)}}</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{{_("Advertisements",2)}}</li>
+  </ol>
+</nav>
+
+<!-- Content Row -->
+<div class="row">
+    <div class="col-md-8">
+        <div class="card card-advertisements-settings">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    {{_("Advertisement Settings",2)}}
+                </h6>
+            </div>
+            <div class="card-body">
+                <form id="advertisements-settings">
+                    {{ csrf_token()|raw }}
+
+                    <div class="form-group">
+                        <label for="ad_chat_left_bar_size">{{_("Chat page left sidebar ad size",2)}}</label>
+                        <select class="form-control" id="ad_chat_left_bar_size" name="ad_chat_left_bar_size">
+                            <option value="ad_responsive" {% if SETTINGS.ad_chat_left_bar_size == 'ad_responsive' %}selected{% endif %}>Responsive</option>
+                            <option value="ad_medium_rectangle" {% if SETTINGS.ad_chat_left_bar_size == 'ad_medium_rectangle' %}selected{% endif %}>Medium rectangle</option>
+                            <option value="ad_large_rectangle" {% if SETTINGS.ad_chat_left_bar_size == 'ad_large_rectangle' %}selected{% endif %}>Large rectangle</option>
+                            <option value="ad_half_banner" {% if SETTINGS.ad_chat_left_bar_size == 'ad_half_banner' %}selected{% endif %}>Half banner</option>
+                            <option value="ad_squre" {% if SETTINGS.ad_chat_left_bar_size == 'ad_squre' %}selected{% endif %}>Squre</option>
+                            <option value="ad_small_squre" {% if SETTINGS.ad_chat_left_bar_size == 'ad_small_squre' %}selected{% endif %}>Small squre</option>
+                            <option value="ad_small_rectangle" {% if SETTINGS.ad_chat_left_bar_size == 'ad_small_rectangle' %}selected{% endif %}>Small rectangle</option>
+                            <option value="ad_button" {% if SETTINGS.ad_chat_left_bar_size == 'ad_button' %}selected{% endif %}>Button</option>
+                            <option value="ad_vertical_banner" {% if SETTINGS.ad_chat_left_bar_size == 'ad_vertical_banner' %}selected{% endif %}>Vertical banner</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="ad_chat_left_bar">{{_("Chat page left sidebar ad ",2)}}</label>
+                        <textarea name="ad_chat_left_bar" id="ad_chat_left_bar" class="form-control" rows="5" cols="80">{{SETTINGS.ad_chat_left_bar|raw}}</textarea>
+                    </div>
+                    <br>
+                    <hr />
+                    <br>
+                    <div class="form-group">
+                        <label for="ad_chat_right_bar_size">{{_("Chat page right sidebar ad size",2)}}</label>
+                        <select class="form-control" id="ad_chat_right_bar_size" name="ad_chat_right_bar_size">
+                            <option value="ad_responsive" {% if SETTINGS.ad_chat_right_bar_size == 'ad_responsive' %}selected{% endif %}>Responsive</option>
+                            <option value="ad_medium_rectangle" {% if SETTINGS.ad_chat_right_bar_size == 'ad_medium_rectangle' %}selected{% endif %}>Medium rectangle</option>
+                            <option value="ad_large_rectangle" {% if SETTINGS.ad_chat_right_bar_size == 'ad_large_rectangle' %}selected{% endif %}>Large rectangle</option>
+                            <option value="ad_half_banner" {% if SETTINGS.ad_chat_right_bar_size == 'ad_half_banner' %}selected{% endif %}>Half banner</option>
+                            <option value="ad_squre" {% if SETTINGS.ad_chat_right_bar_size == 'ad_squre' %}selected{% endif %}>Squre</option>
+                            <option value="ad_small_squre" {% if SETTINGS.ad_chat_right_bar_size == 'ad_small_squre' %}selected{% endif %}>Small squre</option>
+                            <option value="ad_small_rectangle" {% if SETTINGS.ad_chat_right_bar_size == 'ad_small_rectangle' %}selected{% endif %}>Small rectangle</option>
+                            <option value="ad_button" {% if SETTINGS.ad_chat_right_bar_size == 'ad_button' %}selected{% endif %}>Button</option>
+                            <option value="ad_vertical_banner" {% if SETTINGS.ad_chat_right_bar_size == 'ad_vertical_banner' %}selected{% endif %}>Vertical banner</option>
+                            <option value="ad_portrait" {% if SETTINGS.ad_chat_right_bar_size == 'ad_portrait' %}selected{% endif %}>Portrait</option>
+                            <option value="ad_skyscraper" {% if SETTINGS.ad_chat_right_bar_size == 'ad_skyscraper' %}selected{% endif %}>Skyscraper</option>
+                            <option value="ad_halfpage" {% if SETTINGS.ad_chat_right_bar_size == 'ad_halfpage' %}selected{% endif %}>Halfpage</option>
+                            <option value="ad_wide_skyscraper" {% if SETTINGS.ad_chat_right_bar_size == 'ad_wide_skyscraper' %}selected{% endif %}>Wide skyscraper</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="ad_chat_right_bar">{{_("Chat page right sidebar ad",2)}}</label>
+                        <textarea name="ad_chat_right_bar" id="ad_chat_right_bar" class="form-control" rows="5" cols="80">{{SETTINGS.ad_chat_right_bar|raw}}</textarea>
+                    </div>
+                    <button type="button" class="btn btn-primary update-settings" value="advertisements-settings">{{_("Update",2)}}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

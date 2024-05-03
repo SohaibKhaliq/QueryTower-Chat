@@ -1,0 +1,87 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{  url('dashboard') }}">{{_("Dashboard",2)}}</a></li>
+    <li class="breadcrumb-item">{{_("Settings",2)}}</li>
+    <li class="breadcrumb-item active" aria-current="page"><a href="{{  url('dashboard-pages') }}">{{_("Pages",2)}}</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{% if page %} {{_("Edit",2)}} {% else %} {{_("Add",2)}} {% endif %}</li>
+  </ol>
+</nav>
+<!-- Content Row -->
+<form id="add-new-page">
+    <div class="row new-page-row">
+        {{ csrf_token()|raw }}
+        {% if page %}
+            <input type="hidden" id="page_id" name="page_id" value="{{page.id}}">
+            <input type="hidden" id="edit_type" name="edit_type" value="update">
+        {% else %}    
+            <input type="hidden" id="edit_type" name="edit_type" value="add">
+        {% endif %}
+        <div class="col-md-8">
+            <div class="card ">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        {% if page %}  {{_('Edit page',2)}} {% else %}  {{_('Add new page',2)}} {% endif %}
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="title">{{_('Title',2)}}</label>
+                        <input name="title" maxlength="200" id="title" class="form-control" value="{{page.title|default('')}}" />
+                    </div>
+                    <div class="form-group">
+                        <label for="content">{{_('Content',2)}}</label>
+                        <textarea name="content" id="content" class="form-control summernote" rows="8" cols="80">{{page.content|default('')|raw}}</textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card ">
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="permalink">{{_('Permalink',2)}}</label>
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><small>{{SITE_URL}}page/</small></span>
+                            </div>
+                            <input type="text" maxlength="50" class="form-control" id="slug" name="slug" value="{{page.slug|default('')}}" >
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="meta_description">{{_('Meta description',2)}}</label>
+                        <textarea name="meta_description" maxlength="200" id="meta_description" class="form-control" rows="3" cols="80">{{page.meta_description|default('')|raw}}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="show_banner">{{_('Show top banner',2)}}</label>
+                        <select class="form-control" id="show_banner" name="show_banner">
+                            <option {% if page.show_banner == 1 %}selected{% endif %} value="1">{{_('Yes',2)}}</option>
+                            <option {% if page.show_banner == 0 %}selected{% endif %} value="0">{{_('No',2)}}</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="members_only">{{_('Members only page',2)}}</label>
+                        <select class="form-control" id="members_only" name="members_only">
+                            <option {% if page.members_only == 0 %}selected{% endif %} value="0">{{_('No',2)}}</option>
+                            <option {% if page.members_only == 1 %}selected{% endif %} value="1">{{_('Yes',2)}}</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="status">{{_('Publish',2)}}</label> 
+                        <select class="form-control" id="status" name="status">
+                            <option {% if page.status == 1 %}selected{% endif %} value="1">{{_('Yes',2)}}</option>
+                            <option {% if page.status == 0 %}selected{% endif %} value="0">{{_('No',2)}}</option>
+                        </select>
+                    </div>
+                    <button type="button" class="btn btn-primary save-page" value="save-page">{{_('Save Page',2)}}</button>
+                </div>
+            </div>
+        
+        </div>
+        
+    </div>
+</form>
+{% endblock %}

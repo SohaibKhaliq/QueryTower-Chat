@@ -1,0 +1,109 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{  url('dashboard') }}">{{_("Dashboard",2)}}</a></li>
+    <li class="breadcrumb-item">{{_("Settings",2)}}</li>
+    <li class="breadcrumb-item active" aria-current="page">{{_("Email",2)}}</li>
+  </ol>
+</nav>
+
+
+<!-- Content Row -->
+<div class="row">
+    <div class="col-md-8">
+        <div class="card card-email-settings">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    {{_("Email Settings",2)}}
+                </h6>
+            </div>
+            <div class="card-body">
+
+                <div class="alert alert-primary" role="alert">
+                    {{_("These settings will be used to send email verifications, contact emails and password reset emails.",2)}}
+                </div>
+
+                <form id="email-settings">
+                    {{ csrf_token()|raw }}
+                    <div class="form-group">
+                        <label for="email_from_address">{{_("From Email Address",2)}}</label>
+                        <input type="text" class="form-control" id="email_from_address" name="email_from_address" value="{{SETTINGS.email_from_address}}">
+                    </div>
+                    <div class="form-group">
+                        <label for="email_from_name">{{_("From Email Name",2)}}</label>
+                        <input type="text" class="form-control" id="email_from_name" name="email_from_name" value="{{SETTINGS.email_from_name}}">
+                    </div>
+                    <hr>
+                    <div class="form-group">
+                        <label for="email_host">{{_("Send Emails via",2)}}</label>
+                        <select class="form-control" name="send_emails_via" id="send_emails_via">
+                            <option value="phpmailer" {% if SETTINGS.send_emails_via == "phpmailer" %}selected{% endif %} >{{_("PHPMailer",2)}}</option>
+                            <option value="smtp" {% if SETTINGS.send_emails_via == "smtp" %}selected{% endif %} >{{_("SMTP",2)}}</option>
+                            <option value="mailgun" {% if SETTINGS.send_emails_via == "mailgun" %}selected{% endif %} >{{_("Mailgun",2)}}</option>
+                        </select>
+                    </div>
+                    <span class="email-settings-config smtp"  {% if SETTINGS.send_emails_via != "smtp" %}style="display:none;"{% endif %} >
+                        <div class="form-group">
+                            <label for="email_host">{{_("Email Host",2)}}</label>
+                            <i class="fas fa-info-circle" title="{{_('You can set this yes to send emails using SMTP. Your hosting service provider can provide you with required settings for SMTP',2)}}" data-toggle="tooltip" data-placement="top"></i>
+                            <input type="text" class="form-control" id="email_host" name="email_host" value="{{SETTINGS.email_host}}">
+                        </div>
+                        <div class="form-group">
+                            <label for="email_username">{{_("Email Username",2)}}</label>
+                            <input type="text" class="form-control" id="email_username" name="email_username" value="{{SETTINGS.email_username}}">
+                        </div>
+                        <div class="form-group">
+                            <label for="email_password">{{_("Email Password",2)}}</label>
+                            <input type="password" class="form-control" id="email_password" name="email_password" value="{{SETTINGS.email_password}}">
+                        </div>
+                        <div class="form-group">
+                            <label for="email_port">{{_("Email Port",2)}}</label>
+                            <input type="text" class="form-control" id="email_port" name="email_port" value="{{SETTINGS.email_port}}">
+                        </div>
+                    </span>
+                    <span class="email-settings-config mailgun" {% if SETTINGS.send_emails_via != "mailgun" %}style="display:none;"{% endif %}>
+                        <div class="form-group">
+                            <label for="mailgun_api_key">{{_("Mailgun API Key",2)}}</label> 
+                            <a href="https://help.mailgun.com/hc/en-us/articles/203380100-Where-Can-I-Find-My-API-Key-and-SMTP-Credentials-" target="_blank"><i class="fas fa-info-circle"></i></a>
+                            <input type="text" class="form-control" id="mailgun_api_key" name="mailgun_api_key" value="{{SETTINGS.mailgun_api_key}}">
+                        </div>
+                        <div class="form-group">
+                            <label for="mailgun_base_url">{{_("Mailgun Base URL",2)}}</label>
+                            <a href="https://documentation.mailgun.com/en/latest/api-intro.html#base-url-1" target="_blank"><i class="fas fa-info-circle"></i></a>
+                            <input type="text" class="form-control" id="mailgun_base_url" name="mailgun_base_url" value="{{SETTINGS.mailgun_base_url|default('https://api.mailgun.net/')}}">
+                        </div>
+                        <div class="form-group">
+                            <label for="mailgun_domain">{{_("Your Mailgun Domain",2)}}</label>
+                            <i class="fas fa-info-circle" title="{{_('Your Mailgun verified domain',2)}}" data-toggle="tooltip" data-placement="top"></i>
+                            <input type="text" class="form-control" id="mailgun_domain" name="mailgun_domain" value="{{SETTINGS.mailgun_domain}}">
+                        </div>
+                        <div class="form-group">
+                            <label for="mailgun_list_add">{{_("Add Users to Mailgun Mailing List",2)}}</label>
+                            <i class="fas fa-info-circle" title="{{_('You can choose add your users to a pre created Mailgun mailing list.',2)}}" data-toggle="tooltip" data-placement="top"></i>
+                            <select class="form-control" name="mailgun_list_add" id="mailgun_list_add">
+                                <option value="0" {% if SETTINGS.mailgun_list_add == "0" %}selected{% endif %} >{{_("No",2)}}</option>
+                                <option value="registration" {% if SETTINGS.mailgun_list_add == "registration" %}selected{% endif %} >{{_("After Registration",2)}}</option>
+                                <option value="verification" {% if SETTINGS.mailgun_list_add == "verification" %}selected{% endif %} >{{_("After Email Verification",2)}}</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="mailgun_list">{{_("Mailgun Mailing List Alias address",2)}}</label>
+                            <a href="https://app.mailgun.com/app/sending/lists/" target="_blank"><i class="fas fa-info-circle"></i></a>
+                            <input type="text" class="form-control" id="mailgun_list" name="mailgun_list" value="{{SETTINGS.mailgun_list}}">
+                        </div>
+                    </span>
+
+                    <span class="email-settings-config phpmailer" {% if SETTINGS.send_emails_via != "phpmailer" %}style="display:none;"{% endif %}>
+
+                    </span>
+                    <button type="button" class="btn btn-primary update-settings" value="email-settings">{{_("Update",2)}}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

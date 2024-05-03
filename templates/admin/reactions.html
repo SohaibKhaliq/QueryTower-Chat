@@ -1,0 +1,79 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{  url('dashboard') }}">{{_("Dashboard",2)}}</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{{_("Reactions",2)}}</li>
+  </ol>
+</nav>
+
+<!-- Content Row -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-reaction-settings">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    {{_('Reaction Settings',2)}}
+                </h6>
+            </div>
+            <div class="card-body">
+                <form id="reaction-settings" enctype='multipart/form-data'>
+                    {{ csrf_token()|raw }}
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>{{_("Reaction Name",2)}}</th>
+                                    <th>{{_("Reaction CSS",2)}}
+                                        <small class="form-text text-muted">
+                                            {{_('CSS class name from ',2)}}<a href="https://animate.style/" target="_blank">https://animate.style/</a>
+                                        </small>
+                                    </th>
+                                    <th>{{_("Reaction GIF/ICON",2)}}</th>
+                                    <th>{{_("Status",2)}}</th>
+                                </tr>
+                            </thead>
+                            <tbody class="reaction-list">
+                                {% for i in 1..7 %}
+                                <tr>
+                                    <td>
+                                        {{_('Reaction ',2)}}{{i}}
+                                    </td>
+                                    <td>
+                                        <input class="form-control" type="text" id='react_name_{{i}}' name="react_name_{{i}}" value="{{attribute(SETTINGS, "react_name_" ~ i)}}" placeholder="{{_('Reaction Name',2)}}">
+                                    </td>
+                                    <td>
+                                        <input class="form-control" type="text" id='react_css_{{i}}' name="react_css_{{i}}" value="{{attribute(SETTINGS, "react_css_" ~ i)}}" placeholder="{{_('Reaction CSS',2)}}">
+                                    </td>
+                                    <td>
+                                        <label class="btn btn-sm btn-reaction-icon-upload">
+                                            <i class="fas fa-camera"></i>
+                                            <input type="file" class="upload-reaction-icon" data-image="" name="react_{{i}}" value="Upload Photo">
+                                        </label>
+                                        <img class="reaction-icon" id='reaction-icon' src="{{MEDIA_URL}}/reactions/react_{{i}}.gif" />
+
+                                    </td>
+                                    <td>
+                                        <select class="form-control" id="status" name="react_enable_{{i}}">
+                                            <option value="1" {% if attribute(SETTINGS, "react_enable_" ~ i) == '1' %}selected{% endif %}>{{_('Active',2)}}</option>
+                                            <option value="0" {% if attribute(SETTINGS, "react_enable_" ~ i) == '0' %}selected{% endif %}>{{_('Inactive',2)}}</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                    <button type="button" class="btn btn-primary update-settings" value="reaction-settings">{{_("Update",2)}}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

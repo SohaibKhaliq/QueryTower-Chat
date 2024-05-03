@@ -1,0 +1,162 @@
+body{
+    font-family: '{{GOOGLE_FONT_FAMILY?GOOGLE_FONT_FAMILY:Poppins}}', sans-serif;
+}
+
+
+{% if SETTINGS.home_bg_gradient_1 %}
+ /* Homepage Color Gradient */
+.bg-gradient-primary-to-secondary, .bg-gradient-primary, .join {
+	background-color: {{ SETTINGS.home_bg_gradient_1 }} !important;
+	background-image: linear-gradient(135deg, {{ SETTINGS.home_bg_gradient_1 }} 0%, {{ SETTINGS.home_bg_gradient_2 }} 100%) !important;
+}
+{% endif %}
+
+{% if SETTINGS.home_text_color %}
+/* Homepage Text color */
+.about-container .title, .about-container .text, .sq .card-text{
+    color: {{ SETTINGS.home_text_color }} !important;
+}
+{% endif %}
+
+{% if SETTINGS.home_header_bg_color %}
+/* Homepage Header Background Color */
+.navbar-marketing.navbar-dark.navbar-scrolled, .navbar-no-header {
+	background-color: {{ SETTINGS.home_header_bg_color }} !important;
+}
+{% endif %}
+
+{% if SETTINGS.home_header_text_color %}
+/* Homepage Header Text color */
+.navbar-dark .navbar-nav .nav-link, .page-header-title, .page-header-text {
+	color: {{ SETTINGS.home_header_text_color }} !important;
+}
+{% endif %}
+
+{% if SETTINGS.chat_userlist_bg_gradient_1 %}
+/* Chat User List Color Gradient */
+.chat-list-col {
+	background: {{ SETTINGS.chat_userlist_bg_gradient_1 }} !important;
+	background: linear-gradient(180deg, {{ SETTINGS.chat_userlist_bg_gradient_1 }} 0%, {{ SETTINGS.chat_userlist_bg_gradient_2 }} 100%) !important;
+}
+{% endif %}
+
+{% if SETTINGS.chat_userlist_text_color %}
+/* Chat User List Text color */
+.chat-name, .chat-preview, .chat-list-col .nav-link{
+	color: {{ SETTINGS.chat_userlist_text_color }} !important;
+}
+{% endif %}
+
+{% if SETTINGS.chat_container_bg_gradient_1 %}
+/* Chat Container Color Gradient */
+.chat-messages-col {
+	background: {{ SETTINGS.chat_container_bg_gradient_1 }} !important;
+	background: linear-gradient(180deg, {{ SETTINGS.chat_container_bg_gradient_1 }} 0%, {{ SETTINGS.chat_container_bg_gradient_2 }} 100%) !important;
+}
+{% endif %}
+
+{% if SETTINGS.chat_container_bg_gradient_1 %}
+nav.navbar.navbar-expand.navbar-light.topbar.static-top.lite-shadow{
+	background: {{ SETTINGS.chat_container_bg_gradient_1 }} !important;
+	background: linear-gradient(180deg, {{ SETTINGS.chat_container_bg_gradient_1 }} 0%, {{ SETTINGS.chat_container_bg_gradient_2 }} 100%) !important;
+}
+{% endif %}
+
+{% if SETTINGS.chat_container_text_color %}
+/* Chat Container Text color */
+.chat-title, .chat-slug, .new-date, .message-time{
+	color: {{ SETTINGS.chat_container_text_color }} !important;
+}
+{% endif %}
+
+{% if SETTINGS.chat_container_received_bubble_color %}
+/* Received Chat Background Color */
+.replies .chat-img-sgl, .replies .chat-img-duo, .replies .chat-img-grp, .replies .chat-gif, .replies .chat-txt, .replies .message-data small, .replies .chat-replied-bubble  {
+	background: {{ SETTINGS.chat_container_received_bubble_color }} !important;
+}
+
+.replies .message-data:after{
+	border-color: {{ SETTINGS.chat_container_received_bubble_color }} transparent transparent transparent;
+}
+
+.replies .message-data{
+    background: {{ SETTINGS.chat_container_received_bubble_color }} !important;
+}
+
+{% endif %}
+
+{% if SETTINGS.chat_container_received_text_color %}
+/* Received Chat Text Color */
+.messages ul li.replies .message-data {
+	color: {{ SETTINGS.chat_container_received_text_color }} !important;
+}
+
+{% endif %}
+
+{% if SETTINGS.chat_container_sent_bubble_color %}
+/* Sent Chat Background Color */
+.sent .chat-img-sgl, .sent .chat-img-duo, .sent .chat-img-grp, .sent .chat-gif, .sent .chat-txt, .sent .chat-replied-bubble {
+	background: {{ SETTINGS.chat_container_sent_bubble_color }};
+}
+
+.sent .message-data:before{
+	border-color:  {{ SETTINGS.chat_container_sent_bubble_color }} transparent transparent transparent;
+}
+
+.sent .message-data {
+    background: {{ SETTINGS.chat_container_sent_bubble_color }} !important;
+}
+
+{% endif %}
+
+{% if SETTINGS.chat_container_sent_text_color %}
+/* Sent Chat Text Color */
+.messages ul li.sent .message-data {
+	color: {{ SETTINGS.chat_container_sent_text_color }} !important;
+}
+{% endif %}
+
+{% if SETTINGS.chat_container_username_text_color %}
+/* Group Chat Username Text Color */
+.messages ul li.replies .message-data small{
+	color: {{ SETTINGS.chat_container_username_text_color }} !important;
+}
+{% endif %}
+
+{% if SETTINGS.chat_info_bg_gradient_1 %}
+/* Chat Info Background Gradient */
+.selected-chat-col, .selected-chat {
+	background: {{ SETTINGS.chat_info_bg_gradient_1 }} !important;
+	background: linear-gradient(180deg, {{ SETTINGS.chat_info_bg_gradient_1 }} 0%, {{ SETTINGS.chat_info_bg_gradient_2 }} 100%) !important;
+}
+{% endif %}
+
+{% if SETTINGS.chat_info_section_header_color %}
+/* Chat Info Section Header Color */
+.chat-data-header, .chat-list-col .nav-link.active{
+	background: {{ SETTINGS.chat_info_section_header_color }} !important;
+}
+.input-message-write{
+	background: {{ SETTINGS.chat_info_section_header_color }} !important;
+}
+{% endif %}
+
+{% if SETTINGS.chat_info_text_color %}
+/* Chat Info Text Color */
+.chat-data-header{
+	color: {{ SETTINGS.chat_info_text_color }} !important;
+}
+{% endif %}
+
+{% if SETTINGS.chat_info_text_color %}
+.selected-chat-name, .active-group-users, .selected-chat-profile{
+	color: {{ SETTINGS.chat_info_text_color }} !important;
+}
+{% endif %}
+
+{% if SETTINGS.homepage_banner %}
+.page-header{
+    background-image: url({{MEDIA_URL}}/settings/{{SETTINGS.homepage_banner}}) !important;
+    background-size: cover;
+}
+{% endif %}

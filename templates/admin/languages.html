@@ -1,0 +1,91 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{  url('dashboard') }}">{{_("Dashboard",2)}}</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{{_("Languages",2)}}</li>
+  </ol>
+</nav>
+
+<div class="row ">
+    <div class="col-md-12">
+        <div class="card card-language-settings">
+            <div class="card-body">
+                <form id="language-settings">
+                    {{ csrf_token()|raw }}
+                    <div class="form-group">
+                        <label for="enable_multiple_languages">{{_("Enable Multiple Languages?",2)}}</label>
+                        <select class="form-control" id="enable_multiple_languages" name="enable_multiple_languages">
+                            <option value="1" {% if SETTINGS.enable_multiple_languages == 1 %}selected{% endif %}>{{_("Yes",2)}}</option>
+                            <option value="0" {% if SETTINGS.enable_multiple_languages == 0 %}selected{% endif %}>{{_("No",2)}}</option>
+                        </select>
+                    </div>
+                    <button type="button" style="display:none" class="btn btn-primary update-settings" value="language-settings">{{_("Update",2)}}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<hr>
+<!-- Content Row -->
+<div class="row ">
+    <div class="col-md-12">
+        <div class="card card-language-list">
+            <div class="card-header d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    {{_("Languages",2)}}
+                </h6>
+                <span>
+                <a href="{{  url('dashboard-language-edit') }}" class=" btn btn-primary btn-sm">{{_("Add New",2)}}</a>
+                <a target="_blank" href="{{  url('dashboard-rebuild-translate') }}" class="btn btn-primary btn-sm">{{_('Re Scan',2)}}</a>
+                </span>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Lang Code</th>
+                                <th>{{_("Name",2)}}</th>
+                                <th>Country Code</th>
+                                <th>{{_("Direction",2)}}</th>
+                                <th>{{_("Google Font Family",2)}}</th>
+                                <th>{{_("Translation",2)}}</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for language in languages %}
+                                <tr>
+                                    <td>{{language.code}}</td>
+                                    <td>{{language.name}}</td>
+                                    <td>{{language.country}}</td>
+                                    <td>{{language.direction|upper}}</td>
+                                    <td>{{language.google_font_family}}</td>
+                                    <td>
+                                        <a class="btn btn-xs btn-success" href="{{  url('dashboard-language-translation') }}?lang={{language.code}}&section=1"  data-toggle="tooltip" data-placement="top" title="View Language Translation"  >
+                                            <i class="fas fa-eye"></i> {{_("Translate",2)}}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a class="btn btn-xs btn-info" href="{{  url('dashboard-language-edit') }}?lang={{language.code}}"  data-toggle="tooltip" data-placement="top" title="Edit Language"  >
+                                            <i class="fas fa-edit"></i> {{_("Edit",2)}}
+                                        </a>
+
+                                        <a class="btn btn-xs btn-danger delete-language" href="javascript:void(0)" data-lang="{{language.code}}" class="delete-language" data-toggle="tooltip" data-placement="top" title="Delete Language"  >
+                                            <i class="fas fa-trash"></i> {{_("Delete",2)}}
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

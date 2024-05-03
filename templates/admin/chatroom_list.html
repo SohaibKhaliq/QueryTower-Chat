@@ -1,0 +1,97 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{  url('dashboard') }}">{{_("Dashboard",2)}}</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{{_("Chat Rooms",2)}}</li>
+  </ol>
+</nav>
+
+<!-- Content Row -->
+<div class="row ">
+    <div class="col-md-12">
+        <div class="card card-room-list">
+            <div class="card-header d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    {{_("Chat Room List",2)}}
+                </h6>
+                <a class="btn btn-primary btn-sm" href="{{ url('dashboard-chatroom-edit') }}">{{_("Add New Chat Room",2)}}</a>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>{{_("Name",2)}}</th>
+                                <th>{{_("Slug",2)}}</th>
+                                <th>{{_("Is Protected",2)}}</th>
+                                <th>{{_("Is Visible",2)}}</th>
+                                <th>{{_("Guest View",2)}}</th>
+                                <th>{{_("Joiners",2)}}</th>
+                                <th>{{_("Status",2)}}</th>
+                                <th width="40%"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for chat_room in chat_rooms %}
+                                <tr>
+                                    <td>
+                                        <a target="_blank" class="" href="{{  url('chat-room', {'chatroomslug':chat_room.slug}) }}">
+                                            {{chat_room.name}}
+                                        </a>
+                                    </td>
+                                    <td>{{chat_room.slug}}</td>
+                                    <td>
+                                        {% if chat_room.is_protected %}
+                                            {{_("Yes",2)}}
+                                        {% else %}
+                                            {{_("No",2)}}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if chat_room.is_visible %}
+                                            {{_("Yes",2)}}
+                                        {% else %}
+                                            {{_("No",2)}}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if chat_room.allow_guest_view %}
+                                            {{_("Yes",2)}}
+                                        {% else %}
+                                            {{_("No",2)}}
+                                        {% endif %}
+                                    </td>
+                                    <td>{{chat_room.users_count}}</td>
+                                    <td>
+                                        {% if chat_room.status == 1 %}
+                                            <span class="badge badge-primary">{{_("Active",2)}}</span>
+                                        {% else %}
+                                            <span class="badge badge-warning">{{_("Inactive",2)}}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="nowrap">
+                                        <a href="{{  url('dashboard-chatroom-edit') }}?edit_room={{chat_room.id}}"  data-toggle="tooltip" data-placement="top" title='{{_("Edit Chat Room",2)}}' class="edit-chatroom btn btn-info btn-xs" data-edit-id="{{ chat_room.id }}" >
+                                            <i class="fas fa-edit"></i> {{_("Edit",2)}}
+                                        </a>
+                                        <a href="{{  url('dashboard-chatroom-users') }}?room={{chat_room.id}}"  data-toggle="tooltip" data-placement="top" title='{{_("Room Users",2)}}' class="edit-chatroom btn btn-success btn-xs" data-edit-id="{{ chat_room.id }}" >
+                                            <i class="fas fa-users"></i> {{_("Users",2)}}
+                                        </a>
+                                        <a href="javascript:void(0)" class="btn btn-warning btn-xs delete-chats" id="{{chat_room.id}}" title='{{_("Delete all Chats",2)}}' ><i class="fas fa-trash-restore"></i> {{_("Delete Chats",2)}}</a>
+                                        {% if ((SETTINGS['single_room_mode'] != 1) or ((SETTINGS['single_room_mode'] == 1) and (SETTINGS['default_room_slug'] != chat_room.slug)))  %}
+                                        <a href="javascript:void(0)" class="btn btn-danger btn-xs delete-chatroom" id="{{chat_room.id}}"><i class="fas fa-trash"></i> {{_("Delete Room",2)}}</a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,10 @@
+body{
+    font-family: '{{GOOGLE_FONT_FAMILY?GOOGLE_FONT_FAMILY:Poppins}}', sans-serif;
+}
+
+/* {% if SETTINGS.homepage_banner %} */
+.page-header{
+    background-image: url({{MEDIA_URL}}/settings/{{SETTINGS.homepage_banner}}) !important;
+    background-size: cover;
+}
+/* {% endif %} */

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" class="{{SETTINGS.theme}} {{LANG['direction']}}">
+<head>
+    <meta charset=UTF-8>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no shrink-to-fit=no">
+    <link href="{{STATIC_URL}}/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family={{GOOGLE_FONT_FAMILY?GOOGLE_FONT_FAMILY:Poppins}}:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400;1,500&display=swap">
+    <link rel="stylesheet" media="print" onload="this.onload=null;this.removeAttribute('media');" href="https://fonts.googleapis.com/css2?family={{GOOGLE_FONT_FAMILY?GOOGLE_FONT_FAMILY:Poppins}}:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400;1,500&display=swap">
+    <link href="{{STATIC_URL}}/css/styles.css?v={{CV}}" rel="stylesheet">
+    <link href="{{STATIC_URL}}/css/index.css?v={{CV}}" rel="stylesheet">
+    <link href="{{STATIC_URL}}/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css">
+    <link href="{{STATIC_URL}}/css/flag-icon.min.css" rel="stylesheet">
+    <link href="{{STATIC_URL}}/vendor/select2/select2.min.css" rel="stylesheet" />
+    <link href="{{STATIC_URL}}/vendor/toastr/toastr.min.css" rel="stylesheet" type="text/css">
+    {% if SETTINGS.animate_css %}
+    <link href="{{STATIC_URL}}/css/animate.min.css" rel="stylesheet">
+    {% endif %}
+    <link href="{{ url('color_css') }}" rel="stylesheet">
+    {% if SETTINGS.header_css %}
+    <style media="screen">
+        {{SETTINGS.header_css}}
+    </style>
+    {% endif %}
+    {{SETTINGS.header_js|htmlspecialchars_decode|raw}}
+</head>
+<body>
+    <div id="layoutDefault">
+        <main>{% block content %}{% endblock %}</main>
+    </div>
+    <script src="{{STATIC_URL}}/vendor/jquery/jquery.min.js"></script>
+    <script src="{{STATIC_URL}}/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="{{STATIC_URL}}/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+    <script src="{{STATIC_URL}}/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="{{STATIC_URL}}/vendor/dropdown-datepicker/js/jquery.date-dropdowns.min.js"></script>
+    <script src="{{STATIC_URL}}/js/loadingoverlay.min.js" ></script>
+    <script src="{{STATIC_URL}}/vendor/select2/select2.min.js"></script>
+    <script src="{{STATIC_URL}}/vendor/toastr/toastr.min.js" ></script>
+    <script src="{{ url('scripts_js') }}"></script>
+    <script src="{{ url('index_js') }}"></script>
+
+</body>
+</html>

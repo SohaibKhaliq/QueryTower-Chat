@@ -1,0 +1,75 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{  url('dashboard') }}">{{_("Dashboard",2)}}</a></li>
+    <li class="breadcrumb-item">{{_("Settings",2)}}</li>
+    <li class="breadcrumb-item active" aria-current="page">{{_("Homepage",2)}}</li>
+  </ol>
+</nav>
+
+<!-- Content Row -->
+<div class="row">
+    <div class="col-md-8">
+        <div class="card card-homepage-settings">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    {{_("Homepage Settings",2)}}
+                </h6>
+            </div>
+            <div class="card-body">
+                <form id="homepage-settings">
+                    {{ csrf_token()|raw }}
+                    <div class="form-group">
+                        <label for="homepage_banner_view">{{_("Home Page Banner",2)}}</label>
+                        <select class="form-control" name="homepage_banner_view" id="homepage_banner_view">
+                            <option value="1" {% if SETTINGS.homepage_banner_view == "1" %}selected{% endif %} >{{_("Yes",2)}}</option>
+                            <option value="0" {% if SETTINGS.homepage_banner_view == "0" %}selected{% endif %} >{{_("No",2)}}</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="homepage_title">{{_("Home Page Title",2)}}</label>
+                        <input type="text" class="form-control" id="homepage_title" name="homepage_title" value="{{SETTINGS.homepage_title}}">
+                    </div>
+                    <div class="form-group">
+                        <label for="homepage_description">{{_("Home Page Description",2)}}</label>
+                        <textarea name="homepage_description" id="homepage_description" class="form-control" rows="5" cols="80">{{SETTINGS.homepage_description|htmlspecialchars_decode|raw}}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="homepage_chat_room_limit">{{_("Chat Room Limit",2)}}</label>
+                        <input type="number" name="homepage_chat_room_limit" id="homepage_chat_room_limit" class="form-control" value="{{SETTINGS.homepage_chat_room_limit?SETTINGS.homepage_chat_room_limit:6}}" >
+                    </div>
+                    <div class="form-group">
+                        <label for="chat_room_order">{{_("Chat Room Order",2)}}</label>
+                        <select class="form-control" id="chat_room_order" name="chat_room_order">
+                            <option value="most_users_first" {% if SETTINGS.chat_room_order == 'most_users_first' %}selected{% endif %}>{{_("Most Users First",2)}}</option>
+                            <option value="least_users_first" {% if SETTINGS.chat_room_order == 'least_users_first' %}selected{% endif %}>{{_("Least Users First",2)}}</option>
+                            <option value="newest_first" {% if SETTINGS.chat_room_order == 'newest_first' %}selected{% endif %}>{{_("Newest First",2)}}</option>
+                            <option value="oldest_first" {% if SETTINGS.chat_room_order == 'oldest_first' %}selected{% endif %}>{{_("Oldest First",2)}}</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="homepage_chat_room_view">{{_("Chat Room View",2)}}</label>
+                        <select class="form-control" name="homepage_chat_room_view" id="homepage_chat_room_view">
+                            <option value="small" {% if SETTINGS.homepage_chat_room_view == "small" %}selected{% endif %} >{{_("Small",2)}}</option>
+                            <option value="large" {% if SETTINGS.homepage_chat_room_view == "large" %}selected{% endif %} >{{_("Large",2)}}</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="chatroom_list_title">{{_("Chat Room List Title",2)}}</label>
+                        <input type="text" class="form-control" id="chatroom_list_title" name="chatroom_list_title" value="{{SETTINGS.chatroom_list_title}}">
+                    </div>
+                    <div class="form-group">
+                        <label for="chatroom_list_description">{{_("Chat Room List Description",2)}}</label>
+                        <textarea name="chatroom_list_description" id="chatroom_list_description" class="form-control" rows="5" cols="80">{{SETTINGS.chatroom_list_description}}</textarea>
+                    </div>
+                    <button type="button" class="btn btn-primary update-settings" value="homepage-settings">{{_("Update",2)}}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

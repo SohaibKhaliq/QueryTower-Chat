@@ -1,0 +1,40 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{  url('dashboard') }}">{{_("Dashboard",2)}}</a></li>
+    <li class="breadcrumb-item">{{_("Settings",2)}}</li>
+    <li class="breadcrumb-item active" aria-current="page">{{_("Header",2)}}</li>
+  </ol>
+</nav>
+
+<!-- Content Row -->
+<div class="row">
+    <div class="col-md-8">
+        <div class="card card-header-settings">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    {{_("Header Settings",2)}}
+                </h6>
+            </div>
+            <div class="card-body">
+                <form id="header-settings">
+                    {{ csrf_token()|raw }}
+                    <div class="form-group">
+                        <label for="header_css">{{_("Header CSS",2)}}</label>
+                        <textarea name="header_css" id="header_css" class="form-control" rows="8" cols="80">{{SETTINGS.header_css|raw}}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="header_js">{{_("Header JavaScript",2)}}</label>
+                        <textarea name="header_js" id="header_js" class="form-control" rows="8" cols="80">{{SETTINGS.header_js|raw}}</textarea>
+                    </div>
+                    <button type="button" class="btn btn-primary update-settings" value="header-settings">{{_("Update",2)}}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

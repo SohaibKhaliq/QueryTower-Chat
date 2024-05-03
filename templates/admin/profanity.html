@@ -1,0 +1,47 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{  url('dashboard') }}">{{_('Dashboard',2)}}</a></li>
+    <li class="breadcrumb-item">{{_('Settings',2)}}</li>
+    <li class="breadcrumb-item active" aria-current="page">{{_('Profanity Filter',2)}}</li>
+  </ol>
+</nav>
+
+<!-- Content Row -->
+<div class="row">
+    <div class="col-md-8">
+        <div class="card card-policy-settings">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    {{_('Profanity Settings',2)}}
+                </h6>
+            </div>
+            <div class="card-body">
+                <form id="profanity-settings">
+                    {{ csrf_token()|raw }}
+
+                    <div class="form-group">
+                        <label for="profanity_filter">{{_('Enable Profanity Filter',2)}}</label>
+                        <select class="form-control" id="profanity_filter" name="profanity_filter">
+                            <option value="1" {% if SETTINGS.profanity_filter == 1 %}selected{% endif %}>{{_('Yes',2)}}</option>
+                            <option value="0" {% if SETTINGS.profanity_filter == 0 %}selected{% endif %}>{{_('No',2)}}</option>
+                        </select>
+                    </div>
+                    <div class="form-group enable-profanity-area" {% if SETTINGS.profanity_filter == 0 %}style="display:none;"{% endif %}>
+                        <label for="bad_words">{{_('Bad Words',2)}}</label>
+                        <textarea name="bad_words" id="bad_words" class="form-control" rows="8" cols="80">{{SETTINGS.bad_words}}</textarea>
+                        <small id="bad_words_help" class="form-text text-muted">
+                            {{_('Bad words must be comma separated list. Ex: Lorem, ipsum, dolor, sit, amet',2)}}
+                        </small>
+                    </div>
+                    <button type="button" class="btn btn-primary update-settings" value="profanity-settings">{{_('Update',2)}}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{  url('dashboard') }}">{{_("Dashboard",2)}}</a></li>
+    <li class="breadcrumb-item">{{_("Spam Control",2)}}</li>
+    <li class="breadcrumb-item active" aria-current="page">{{_("Flood",2)}}</li>
+  </ol>
+</nav>
+
+<!-- Content Row -->
+<div class="row">
+    <div class="col-md-8">
+        <div class="card card-flood-control-settings">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    {{_("Flood Control",2)}}
+                </h6>
+            </div>
+            <div class="card-body">
+                <form id="flood-control-settings">
+                    {{ csrf_token()|raw }}
+                    <div class="row">
+                        <div class="col">
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">{{_("User can send",2)}}</span>
+                                </div>
+                                <input type="number" min="1" class="form-control" id="flood_control_message_limit" name="flood_control_message_limit" value="{{SETTINGS.flood_control_message_limit}}">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">{{_("messages within",2)}}</span>
+                                </div>
+                                <input type="number" min="1" class="form-control" id="flood_control_time_limit" name="flood_control_time_limit" value="{{SETTINGS.flood_control_time_limit}}">
+                                <div class="input-group-append">
+                                    <span class="input-group-text">{{_("seconds",2)}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-primary update-settings" value="flood-control-settings">{{_("Update",2)}}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

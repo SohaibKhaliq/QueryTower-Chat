@@ -1,0 +1,58 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{  url('dashboard') }}">{{_("Dashboard",2)}}</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{{_("Guests",2)}}</li>
+  </ol>
+</nav>
+
+
+<!-- Content Row -->
+<div class="row ">
+    <div class="col-md-12">
+        <div class="card card-room-list">
+            <div class="card-header d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    {{_("Guest List",2)}}
+                </h6>
+                <span>
+                    <input type="checkbox" name="" class="check_all" id="check_all"> <label for="check_all">{{_("Check All",2)}}</label>
+                    <button type="button" class="btn btn-danger btn-xs delete-selected-user">{{_("Delete Selected",2)}}</button>
+                </span>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <form id="user-list" >
+                        {{ csrf_token()|raw }}
+                        <table class="table table-bordered" id="guest_list" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th><input type="checkbox" class="check_all" name=""></th>
+                                    <th>{{_("Name",2)}}</th>
+                                    <th>{{_("Username",2)}}</th>
+                                    <th>{{_("Last Seen",2)}}</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                
+
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+    getGuests();
+</script>
+{% endblock %}

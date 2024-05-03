@@ -1,0 +1,52 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{  url('dashboard') }}">{{_("Dashboard",2)}}</a></li>
+    <li class="breadcrumb-item">{{_("Settings",2)}}</li>
+    <li class="breadcrumb-item active" aria-current="page">{{_("Ajax Frequency",2)}}</li>
+  </ol>
+</nav>
+
+<!-- Content Row -->
+<div class="row">
+    <div class="col-md-8">
+        <div class="card card-timing-settings">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    {{_("Ajax Frequency Settings",2)}}
+                </h6>
+            </div>
+            <div class="card-body">
+                <form id="timing-settings">
+                    {{ csrf_token()|raw }}
+                    <div class="form-group">
+                        <label for="chat_receive_check_seconds">{{_("New chat receive every this seconds",2)}}</label>
+                        <input type="number" class="form-control" id="chat_receive_seconds" name="chat_receive_seconds" value="{{SETTINGS.chat_receive_seconds}}">
+                    </div>
+                    <div class="form-group">
+                        <label for="user_list_check_seconds">{{_("User list updates every this seconds",2)}}</label>
+                        <input type="number" class="form-control" id="user_list_check_seconds" name="user_list_check_seconds" value="{{SETTINGS.user_list_check_seconds}}">
+                    </div>
+                    <div class="form-group">
+                        <label for="chat_status_check_seconds">{{_("Chat delivery status updates every this seconds",2)}}</label>
+                        <input type="number" class="form-control" id="chat_status_check_seconds" name="chat_status_check_seconds" value="{{SETTINGS.chat_status_check_seconds}}">
+                    </div>
+                    <div class="form-group">
+                        <label for="online_status_check_seconds">{{_("User online status updates every this seconds",2)}}</label>
+                        <input type="number" class="form-control" id="online_status_check_seconds" name="online_status_check_seconds" value="{{SETTINGS.online_status_check_seconds}}">
+                    </div>
+                    <div class="form-group">
+                        <label for="typing_status_check_seconds">{{_("User typing status updates every this seconds",2)}}</label>
+                        <input type="number" class="form-control" id="typing_status_check_seconds" name="typing_status_check_seconds" value="{{SETTINGS.typing_status_check_seconds}}">
+                    </div>
+                    <button type="button" class="btn btn-primary update-settings" value="timing-settings">{{_("Update",2)}}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

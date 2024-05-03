@@ -1,0 +1,188 @@
+body{
+    font-family: '{{GOOGLE_FONT_FAMILY?GOOGLE_FONT_FAMILY:Poppins}}', sans-serif;
+}
+
+/* {% if SETTINGS.homepage_banner %} */
+.page-header{
+    background-image: url({{MEDIA_URL}}/settings/{{SETTINGS.homepage_banner}}) !important;
+    background-size: cover;
+}
+/* {% endif %} */
+
+.chat-list-col {
+	background: #ffffff;
+}
+
+.room-user-search {
+	background: #ffffff !important;
+}
+
+.nav-sidebar .nav-link.active {
+	background: #ffffff;
+	color: #4e4e4e;
+}
+
+.nav-sidebar .nav-link{
+	color: #4e4e4e;
+}
+
+ul.nav.nav-pills.nav-justified.nav-sidebar {
+	background: #ffffff;
+}
+
+.room-user-search {
+	border: 1px solid #dedede !important;
+	border-left: 0 !important;
+	border-right: 0 !important;
+}
+
+.btn.btn-room-user-search {
+	background: #dbdee0;
+}
+
+.chat-name {
+	color: #4e4e4e;
+}
+
+.input-message-write {
+	border-top: 1px solid #dedede;
+	background: #ffffff;
+}
+
+.panel-content {
+}
+
+.panel-content-right{
+}
+
+.online-status i {
+	border-color: #ffffff;
+}
+
+.selected-chat {
+	background: #ffffff;
+}
+
+.radio-container {
+	background: #ffffff;
+}
+
+.chat-data-header {
+	background: #dbdee0;
+	color: #4e4e4e;
+}
+
+.nav-recent {
+	background: #dbdee0;
+	color: #4e4e4e;
+}
+
+.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+	color: #4e4e4e;
+}
+
+.nav-recent a.nav-link {
+	color: #4e4e4e;
+}
+
+.user-info {
+	color: #4e4e4e;
+}
+
+.topbar .select2-container--bootstrap4 .select2-selection--single .select2-selection__rendered {
+	background: #ffffff;
+	color: #4e4e4e;
+	border: 1px solid #dedede;
+}
+
+
+.radio-panel {
+	box-shadow: none;
+}
+
+.selected-chat-col {
+    background-color: #ffffff;
+}
+
+.chat-messages-col{
+	border-right: 1px solid #dedede;
+	border-left: 1px solid #dedede;
+}
+
+.topbar {
+	border-bottom: 1px solid #dedede;
+	box-shadow: 0 8px 8px -8px rgb(0 0 0 / 10%);
+}
+
+.base-min .nav-pills .nav-link.active, .nav-pills .show > .nav-link, #auth-modal .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+	color: #fff;
+}
+
+.group-item {
+	background: #fff;
+}
+
+.nav-search {
+	border-bottom: none;
+}
+
+.group-sep:after {
+	background: #ffffff;
+}	
+
+
+.group-sep {
+	color: #e5e5e5;
+}
+
+#room-selector {
+	background: #ffffff;
+}
+
+:root {
+    --sent-background: #80c9c2;
+    --sent-color: #f5f5f5;
+}
+
+.room-selected {
+	background: #dbdee0;
+	color: #4e4e4e;
+}
+
+.launch-modal {
+	background: #4e4e4e;
+}	
+
+.bottom-login-section{
+	background: #fff;
+	border-right: none;
+	border-top: 1px solid #dedede;
+}
+
+.user-fname {
+	color: #4e4e4e;
+}
+
+.is-typing {
+	background: #fff;
+}
+
+.theme-selector {
+	background: #dbdee0;
+}
+
+.bottom-login-section #langSelector{
+    background: #dbdee0;
+}
+
+.sent .message-data {
+	color: var(--sent-color);
+}
+
+.sent .file-caption {
+	background: var(--sent-background);
+}
+
+.replies .file-caption {
+	background: var(--received-background);
+}
