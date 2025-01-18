@@ -17,8 +17,8 @@ QueryTower Chat is a lightweight and simple chat application built with PHP, MyS
 1. **Clone the repository:**
 
    ```bash
-   git clone https://github.com/yourusername/querytower-chat.git
-   cd querytower-chat
+   [git clone https://github.com/yourusername/querytower-chat.git](https://github.com/SohaibKhaliq/QueryTower-Chat)
+   cd QueryTower-Chat
 2. **Import Database:**
    - Create a MySQL database and import the provided SQL file (database.sql).
 
